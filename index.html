@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CFR - LATAM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --primary: #2A0087;
+            --primary-dark: #1A0055;
+            --primary-light: #3D0DA8;
+            --accent: #EE1750;
+            --cyan: #00E5FF;
+            --success: #10B981;
+            --success-dark: #059669;
+            --danger: #E53E3E;
+            --help: #FF9900;
+            --warning: #F59E0B;
+            --comment: #6B5E8A;
+            --celeste: #E6F0F8;
+            --button-height: 29px;
+            --button-height-banner: 24px;
+            --button-height-admin: 20px;
+            --button-radius: 7px;
+            --black: #000000;
+            --slate-900: #1E293B;
+            --border: #C0D0DC;
+            --leader-color: var(--primary);
+            --surface: #FFFFFF;
+            --surface-soft: color-mix(in srgb, var(--celeste) 22%, #FFFFFF);
+            --surface-muted: #F3F4F6;
+            --surface-amber: #FFFAF0;
+            --surface-exception: #FFFBEB;
+            --surface-indigo: #E0E7FF;
+            --surface-violet: #F0ECF8;
+            --text-soft: #526176;
+            --indigo: #4338CA;
+            --indigo-dark: #3730A3;
+            --text-lavender: #C4B8D0;
+            --border-soft: #D8E2EA;
+            --border-subtle: #E1E8EF;
+            --border-indigo: #C7D2FE;
+            --google-blue: #4285F4;
+            --google-green: #34A853;
+            --google-yellow: #FBBC05;
+            --google-red: #EA4335;
+            --bg: color-mix(in srgb, var(--celeste) 55%, #FFFFFF);
+            --light-gray: var(--celeste);
+            --gradient-accent: linear-gradient(135deg, var(--primary), var(--primary-light));
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            --gradient-custom: linear-gradient(135deg, var(--indigo), var(--indigo-dark));
+            --gradient-brand: linear-gradient(135deg, var(--primary), var(--primary-dark), var(--primary));
+            --gradient-boot: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--primary-dark));
+            --print-font-size: 14px;
+        }
+
+        body, input, select, button, textarea {
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-transform: uppercase;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        input, select, textarea {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 10px;
+            outline: none;
+            box-sizing: border-box;
+            height: 28px;
+            color: var(--primary);
+            transition: all 0.2s ease;
+            background-color: var(--surface);
+            margin: 0;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 10%, transparent);
+        }
+
+        /* Multi-Select Custom */
+        .custom-multiselect { position: relative; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
+        .multiselect-header {
+            padding: 0 10px; border: 1px solid var(--border); border-radius: 4px;
+            font-size: 10px; height: 28px; background: var(--surface); cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: bold;
+            color: var(--primary); font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-transform: uppercase; user-select: none; transition: border-color 0.2s ease;
+        }
+        .multiselect-header:hover { border-color: var(--primary); }
+        .multiselect-options {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--surface); border: 1px solid var(--primary); z-index: 100;
+            max-height: 180px; overflow-y: auto; border-radius: 4px; box-shadow: 0 4px 8px color-mix(in srgb, var(--black) 10%, transparent);
+            margin-top: 2px;
+        }
+        .multiselect-options.drop-up {
+            top: auto; bottom: 100%; margin-top: 0; margin-bottom: 2px;
+        }
+        .multiselect-options.show { display: block; }
+        .multiselect-options label {
+            display: flex; padding: 8px 10px; font-size: 10px; font-weight: bold; cursor: pointer;
+            align-items: center; gap: 8px; border-bottom: 1px solid var(--light-gray); margin: 0;
+            color: var(--primary); text-transform: uppercase;
+        }
+        .multiselect-options label:last-child { border-bottom: none; }
+        .multiselect-options label:hover { background: var(--light-gray); }
+        .multiselect-options input[type="checkbox"] { height: 14px; width: 14px !important; margin: 0; cursor: pointer; flex-shrink: 0; }
+
+        .container { max-width: 1000px; margin: 0 auto; background: var(--surface); padding: 25px; border-radius: 24px 0 24px 0; box-shadow: 0 4px 12px color-mix(in srgb, var(--black) 5%, transparent); }
+
+        /* Barra superior general */
+        .top-bar {
+            display: flex; justify-content: space-between; margin-bottom: 8px; min-height: 32px;
+            background-color: var(--light-gray); padding: 4px 10px;
+            border-radius: 12px 0 12px 0; align-items: center; position: relative;
+        }
+
+        .top-bar-left { display: flex; gap: 5px; }
+
+        body:not(.team-leader-mode) .leader-only { display: none !important; }
+
+        /* Título de documento */
+        .main-header-wrapper {
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px; padding: 10px 0;
+            min-height: 40px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--cyan)) no-repeat bottom / 100% 3px;
+            flex-wrap: wrap; gap: 20px;
+        }
+        
+        .logo-container {
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            width: 100px;
+        }
+        .logo-container img { width: 100%; height: auto; display: block; }
+        
+        .document-header { 
+            font-size: 1.2em; font-weight: 800; color: var(--primary); margin: 0; 
+            text-align: center; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; width: 100%;
+            padding: 0 110px; box-sizing: border-box; letter-spacing: 1px;
+        }
+
+        /* Panel de selección de avión */
+        .plane-selector-card {
+            background-color: var(--light-gray); border: 1px solid var(--border);
+            border-left: 6px solid var(--leader-color); padding: 16px;
+            border-radius: 16px 0 16px 0; margin-bottom: 10px; transition: opacity 0.3s;
+            display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
+            justify-content: space-between;
+        }
+        .selector-info { display: flex; flex-direction: row; align-items: center; gap: 8px; flex: 1; min-width: 280px; flex-wrap: wrap; }
+        .selector-info label { font-size: 10px; font-weight: 800; color: var(--leader-color); display: flex; align-items: center; gap: 8px; white-space: nowrap;}
+        .selector-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1; min-width: 200px; }
+        
+        .title-select { 
+            font-size: 12px !important; font-weight: 900 !important; color: var(--primary) !important;
+            border: 2px solid var(--primary) !important; padding: 0 12px !important; border-radius: 4px !important;
+            background: var(--surface-soft) !important; cursor: text; flex: 1; max-width: 400px; height: 32px !important;
+        }
+        
+        .badge-eff {
+            background: var(--light-gray); padding: 6px 12px; border-radius: 4px;
+            font-size: 11px; font-weight: 800; color: var(--leader-color); border: 1px solid var(--border);
+            height: 32px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+        }
+        
+        .selector-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+        .plane-svg-container {
+            width: 100%; background-color: var(--surface); border: 1px dashed var(--border);
+            border-radius: 20px 0 20px 0; padding: 10px; margin-bottom: 10px;
+            box-sizing: border-box; position: relative;
+        }
+
+        .svg-toggles { 
+            display: flex; gap: 15px; justify-content: center; margin-bottom: 10px; 
+            border-bottom: 1px solid var(--light-gray); padding: 0 0 10px 0; 
+        }
+        
+        .svg-toggle-btn { 
+            width: 140px; font-size: 11px; height: var(--button-height); border-radius: var(--button-radius);
+            border: 1px solid var(--primary); color: var(--primary); font-weight: 800; 
+            background: var(--surface); transition: all 0.3s; cursor: pointer; text-transform: uppercase;
+            display: inline-flex; align-items: center; justify-content: center;
+            box-sizing: border-box; line-height: 1; margin: 0;
+        }
+        
+        .svg-toggle-btn:hover { background: var(--light-gray); }
+        .svg-toggle-btn.active { 
+            background: var(--gradient-primary) !important; color: var(--surface) !important; 
+            border-color: var(--primary) !important; box-shadow: 0 4px 6px color-mix(in srgb, var(--primary) 20%, transparent); 
+        }
+
+        .svg-group { cursor: pointer; transition: all 0.2s ease; }
+        
+        .svg-clickable { 
+            transition: all 0.2s ease; 
+            stroke: transparent;
+            stroke-width: 15px; 
+            pointer-events: all;
+        }
+        .svg-group:hover .svg-clickable { stroke: var(--primary) !important; stroke-width: 3px !important; }
+        .svg-group.active-zone .svg-clickable { 
+            fill: color-mix(in srgb, var(--accent) 10%, transparent) !important; 
+            stroke: var(--accent) !important; 
+            stroke-width: 6px !important; 
+            opacity: 1 !important;
+        }
+
+        button { 
+            background-color: var(--primary); color: var(--surface); border: none; cursor: pointer; 
+            font-weight: 700; transition: all 0.2s; 
+            display: inline-flex; align-items: center; justify-content: center; 
+            text-align: center; line-height: 1; margin: 0; box-sizing: border-box;
+            padding: 0 10px; border-radius: var(--button-radius); font-size: 10px; height: var(--button-height); text-transform: uppercase; font-family: inherit;
+        }
+        button:hover:not(:disabled) { opacity: 0.9; }
+        button:disabled { cursor: not-allowed; opacity: 0.5; }
+        
+        .btn-accent { background: var(--gradient-primary); }
+        .btn-top {
+            width: 140px; height: var(--button-height); font-size: 10px; padding: 0; font-weight: bold;
+            border-radius: var(--button-radius); border: none; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn-top:hover { opacity: 0.9; }
+        .btn-accent.btn-top, .btn-mode-leader { border: 1px solid transparent; }
+        .btn-accent.btn-top:hover, .btn-mode-leader.btn-top:hover { background: transparent; color: var(--primary); border-color: var(--primary); opacity: 1; }
+        .btn-mode-leader { background: var(--gradient-primary); color: var(--surface); }
+        .btn-leader { background: var(--gradient-primary); color: var(--surface); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--comment); color: var(--comment); }
+        .btn-outline:hover:not(:disabled) { background-color: var(--comment); color: var(--surface); }
+        .btn-danger-outline { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-danger-outline:hover:not(:disabled) { background: var(--danger); color: var(--surface); }
+        #btn-logout { width: 28px; min-width: 28px; padding: 0; font-size: 14px; flex: none; }
+        
+        .btn-action-small { 
+            background-color: var(--light-gray); color: var(--primary); border: 1px solid var(--border); 
+            height: var(--button-height); font-size: 9px; padding: 0 8px; border-radius: var(--button-radius);
+        }
+        .btn-action-small:hover { background-color: var(--primary); color: var(--surface); border-color: var(--primary); }
+
+        .btn-check-mode { border: 1px solid var(--success) !important; color: var(--success) !important; background-color: transparent; }
+        .btn-check-mode.active { background-color: var(--success) !important; color: var(--surface) !important; }
+        body.check-mode-active .btn-verify-part { display: inline-flex !important; }
+        .btn-verify-part { display: none; background-color: var(--success); color: var(--surface); border-color: var(--success); height: var(--button-height); font-size: 9px; padding: 0 8px; border-radius: var(--button-radius); }
+        .btn-verify-part:hover { background-color: var(--success-dark); border-color: var(--success-dark); }
+
+        /* Badges */
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 800; margin-left: 6px; display: inline-block; }
+        .badge-exception { background: var(--surface-amber); color: var(--help); border-left: 4px solid var(--help); }
+        .badge-custom { background: var(--surface-indigo); color: var(--indigo); border-left: 4px solid var(--indigo); }
+        .badge-app { background: var(--primary); color: var(--surface); border-radius: 20px; padding: 2px 8px; font-size: 0.8em; }
+
+        .pn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+
+        .pn-card {
+            border: 1px solid var(--border); border-radius: 20px 0 20px 0; background: var(--surface);
+            box-shadow: 0 2px 4px color-mix(in srgb, var(--black) 4%, transparent); display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .pn-card.card-exception { border-left: 4px solid var(--help); }
+        .pn-card.card-custom { border-left: 4px solid var(--indigo); }
+
+        .pn-desc {
+            background: var(--gradient-primary); color: var(--surface); padding: 10px 14px;
+            font-size: 11px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+            border-radius: 20px 0 0 0;
+        }
+        .pn-card.card-exception .pn-desc { background: var(--gradient-accent); }
+        .pn-card.card-custom .pn-desc { background: var(--gradient-custom); }
+
+        .pn-value-container { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface-soft); flex: 1; }
+        .pn-main-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .pn-value { font-size: 16px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+
+        .pn-extra-info {
+            display: flex; justify-content: space-between; background: var(--light-gray);
+            padding: 6px 8px; border-radius: 4px; font-size: 10px; color: var(--primary); font-weight: bold;
+            border: 1px solid var(--border); flex-wrap: wrap; gap: 5px; margin-top: auto;
+        }
+
+        .btn-copy {
+            background-color: var(--light-gray); color: var(--primary); padding: 0 10px; height: var(--button-height);
+            font-size: 9px; border: 1px solid var(--border); border-radius: var(--button-radius); font-weight: 700;
+        }
+        .btn-copy:hover { background-color: var(--primary); color: var(--surface); border-color: var(--primary); }
+
+        .no-results {
+            text-align: center; padding: 30px; color: var(--comment); font-style: italic; font-size: 11px;
+            border: 1px dashed var(--border); border-radius: 6px; background: var(--surface);
+            grid-column: 1 / -1;
+        }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: color-mix(in srgb, var(--slate-900) 60%, transparent); backdrop-filter: blur(4px); }
+        .modal-content {
+            background-color: var(--surface); margin: 6% auto; padding: 20px;
+            border: none; width: 95%; max-width: 1000px; border-radius: 8px;
+            box-shadow: 0 10px 30px color-mix(in srgb, var(--black) 30%, transparent); max-height: 85vh; overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .modal-header { 
+            font-weight: 800; font-size: 1.1em; margin-bottom: 15px; color: var(--primary); 
+            border-bottom: 2px solid var(--accent); padding-bottom: 8px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        
+        .modal-form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; background: var(--light-gray); padding: 12px; border-radius: 6px; align-items: flex-end; }
+        .modal-form-group { flex: 1; min-width: 200px; }
+        .modal-form-group input, .modal-form-group select { width: 100% !important; margin-bottom: 0 !important; }
+
+        .table-headers {
+            display: flex; gap: 8px; font-size: 10px; font-weight: bold; color: var(--comment);
+            margin-bottom: 5px; padding: 0 40px 0 12px;
+        }
+        .component-row-wrapper { 
+            display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; 
+            background: transparent; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--light-gray);
+            transition: background-color 0.2s;
+        }
+        .component-row-wrapper:nth-child(even) { background-color: var(--light-gray); }
+        
+        .row-exception { border-left: 4px solid var(--help) !important; background: var(--surface-exception) !important; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        
+        .component-row-main { display: flex; gap: 8px; width: 100%; align-items: center; }
+        
+        .col-desc { flex: 2.5; }
+        .col-pn { flex: 2; }
+        .col-pos { flex: 2; }
+        .col-ata { flex: 1; }
+        .col-ipc { flex: 1.5; }
+        .col-app { flex: 1.5; }
+        
+        .btn-remove-row { 
+            background: transparent; color: var(--danger); font-size: 14px; padding: 0;
+            height: var(--button-height); width: 28px; border: 1px solid var(--danger); border-radius: var(--button-radius);
+            flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+        .btn-remove-row:hover { background: var(--danger); color: var(--surface); }
+        
+        .override-controls { display: flex; gap: 10px; margin-top: 5px; padding-top: 5px; border-top: 1px dashed var(--border); justify-content: flex-end; align-items: center;}
+        
+        .modal-footer { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); justify-content: flex-end; flex-wrap: wrap; }
+
+        #prompt-modal input { width: 100%; margin-bottom: 12px; box-sizing: border-box; }
+        #prompt-modal .modal-footer { margin-top: 5px; justify-content: stretch; }
+        #prompt-modal .btn-modal-action { flex: 1; padding: 0; height: var(--button-height); font-size: 10px; border-radius: var(--button-radius); }
+        .admin-modal-content { padding: 0 !important; width: 95%; max-width: 860px; min-height: 540px; border-radius: 12px; overflow-x: hidden; overflow-y: auto; background-color: var(--surface); }
+        .admin-modal-header { margin: 0; padding: 10px 14px 8px; background: var(--surface); color: var(--primary); border: 0; border-bottom: 2px solid var(--accent); font-size: 1.05em; font-weight: 800; letter-spacing: 0; }
+        .admin-modal-layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 10px; padding: 10px; align-items: start; }
+        .admin-side { display: flex; flex-direction: column; gap: 8px; }
+        .admin-card { border: 1px solid var(--border-soft); border-radius: 7px; padding: 7px; background: var(--light-gray); }
+        .admin-card-title { color: var(--primary); font-size: 9px; font-weight: 800; letter-spacing: 0.3px; }
+        .modal-content .admin-field { width: 100%; height: 28px; margin: 4px 0 0; background: var(--surface); }
+        .admin-role-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; margin-top: 5px; }
+        .admin-role-option { display: flex; align-items: center; justify-content: center; gap: 2px; min-height: 24px; padding: 2px; border: 1px solid var(--border-soft); border-radius: 4px; background: var(--surface); color: var(--primary); font-size: 8px; font-weight: 800; cursor: pointer; }
+        .admin-role-option:has(input:checked) { border-color: var(--primary); background: var(--surface-violet); color: var(--primary); }
+        .admin-role-option input { margin: 0; accent-color: var(--primary); }
+        .admin-add-button { width: 100%; height: var(--button-height); border-radius: var(--button-radius); font-size: 9px; box-shadow: none; }
+        .admin-list-panel { min-width: 0; }
+        .admin-list-title { margin-bottom: 4px; color: var(--text-soft); font-size: 9px; font-weight: 800; letter-spacing: 0.3px; }
+        .modal-content .admin-search { width: 100%; height: 30px; flex: none; box-sizing: border-box; margin: 0 0 6px; background: var(--surface); }
+        .admin-user-list { height: 400px; max-height: 60vh; overflow-y: auto; font-size: 10px; border: 1px solid var(--border-soft); border-radius: 8px; padding: 5px; background: var(--light-gray); }
+        .admin-empty { padding: 12px 6px; text-align: center; color: var(--comment); font-size: 9px; font-weight: 800; }
+        .admin-user-row { display: flex; align-items: center; gap: 5px; padding: 5px 6px; border: 1px solid var(--border-subtle); border-radius: 6px; margin-bottom: 4px; background: var(--surface); }
+        .admin-user-row.no-access { background: var(--surface-muted); }
+        .admin-user-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px; }
+        .admin-user-copy { min-width: 0; display: flex; flex-direction: column; gap: 0; }
+        .admin-username { color: var(--primary); font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-user-row.no-access .admin-username { color: var(--comment); }
+        .admin-realname { color: var(--comment); font-size: 9px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-role-badge { flex: none; padding: 1px 4px; border-radius: 8px; color: var(--surface); font-size: 7px; font-weight: 800; letter-spacing: 0.2px; }
+        .admin-role-badge.admin { background: var(--danger); }
+        .admin-user-actions { display: flex; flex: none; gap: 2px; }
+        .admin-user-actions .btn-action-small { width: 24px; min-width: 24px; height: var(--button-height-admin) !important; padding: 0; border-radius: var(--button-radius); font-size: 8px; }
+        .admin-user-actions .admin-action-wide { width: 38px; }
+        .admin-user-action.active-user { background: var(--primary); border-color: var(--primary); color: var(--surface); }
+        .admin-user-action.active-tech { background: var(--success); border-color: var(--success); color: var(--surface); }
+        .admin-user-action.active-tl { background: var(--comment); border-color: var(--comment); color: var(--surface); }
+        .admin-user-action.active-admin { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+        .admin-user-action.delete-user:hover { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+        .admin-modal-footer { justify-content: flex-end; margin: 0; padding: 8px 10px; background: var(--surface-soft); border-top: 1px solid var(--border-soft); }
+        .admin-modal-footer button { height: var(--button-height); padding: 0 14px; border-radius: var(--button-radius); font-size: 9px; }
+        
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: var(--primary); color: var(--surface);
+            text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 1001;
+            bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; box-shadow: 0 4px 12px color-mix(in srgb, var(--black) 20%, transparent);
+            opacity: 0; transition: opacity 0.3s, visibility 0.3s; border-left: 4px solid var(--accent);
+        }
+        #toast.show { visibility: visible; opacity: 1; }
+
+        @media (max-width: 800px) {
+            body { padding: 8px; }
+            .container { padding: 12px; }
+
+            .top-bar { flex-direction: column; gap: 8px; }
+            .top-bar-left { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 5px; }
+            .top-bar-left > * { flex: 1; min-width: 0; }
+            #btn-mode-toggle { flex: 1 1 0; max-width: none; min-width: 0; }
+
+            .main-header-wrapper { flex-direction: column; text-align: center; gap: 12px; padding-bottom: 15px; }
+            .logo-container { position: relative; transform: none; top: auto; left: auto; }
+            .document-header { padding: 0; }
+
+            .plane-selector-card { flex-direction: column; align-items: stretch; text-align: center; gap: 10px; }
+            .selector-info { min-width: 100%; }
+            .selector-info label { justify-content: center; }
+            .title-select { max-width: 100%; }
+            .selector-actions { flex-direction: row; width: 100%; }
+            .selector-actions button { flex: 1; min-width: 0; margin: 0 !important; }
+            
+            .pn-grid { grid-template-columns: 1fr; }
+
+            .table-headers { display: none; }
+            .component-row-main { flex-direction: column; gap: 8px; align-items: stretch; background: var(--surface); padding: 10px; border-radius: 4px; border: 1px solid var(--border); }
+            .col-desc, .col-pn, .col-pos, .col-ata, .col-ipc, .col-app { width: 100% !important; flex: none !important; margin: 0 !important; box-sizing: border-box; }
+            .btn-remove-row { width: 100%; height: var(--button-height); margin-top: 5px; }
+            .component-row-wrapper { padding: 10px; background: var(--light-gray); border-radius: 6px; }
+
+            .modal-content { width: 92%; padding: 16px; margin: 10% auto; }
+            .admin-modal-content { width: 98% !important; min-height: 0; max-height: 92vh; margin: 4% auto; padding: 0 !important; }
+            .admin-modal-layout { grid-template-columns: minmax(0, 1fr); padding: 10px; gap: 10px; }
+            .admin-user-list { height: 300px; max-height: 46vh; }
+            .admin-user-row { align-items: flex-start; flex-wrap: wrap; }
+            .admin-user-main { width: 100%; }
+            .admin-user-actions { width: 100%; justify-content: flex-end; }
+            .modal-footer button { width: 100%; }
+            .admin-modal-footer button { width: auto; }
+            .override-controls { flex-direction: column; align-items: stretch; }
+            .override-controls button { width: 100%; }
+        }
+
+        button {
+            height: var(--button-height) !important;
+            border-radius: var(--button-radius) !important;
+        }
+
+        @media print {
+            @page { size: letter; margin: 1.2cm; } 
+            body .no-print { display: none !important; }
+            body { padding: 0 !important; background-color: var(--surface); font-size: var(--print-font-size); line-height: 1.15; }
+            .container { padding: 0 !important; box-shadow: none; max-width: 100%; }
+            
+            .main-header-wrapper { flex-direction: row !important; text-align: center !important; gap: normal !important; padding: 6px 0 8px 0 !important; margin-bottom: 8px; min-height: 36px; }
+            .logo-container img { height: 28px !important; }
+            .logo-container { position: absolute !important; left: 0 !important; top: 50% !important; transform: translateY(-50%) !important; }
+            .document-header { font-size: 1.1em; padding: 0 85px !important; }
+            
+            .pn-card { box-shadow: none; }
+            .pn-desc { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+    <style>
+        .login-screen { position: fixed; inset: 0; z-index: 9999; background: var(--gradient-brand); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-card { background: var(--surface); border-radius: 16px 0 16px 0; box-shadow: 0 20px 60px color-mix(in srgb, var(--black) 35%, transparent); padding: 32px 28px 24px; width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+        .login-card img { height: 52px; width: auto; margin: 0 auto; }
+        .login-title { font-size: 1.15em; font-weight: 900; color: var(--primary); }
+        .login-sub { font-size: 10px; font-weight: 700; color: var(--comment); margin-bottom: 6px; }
+        .login-card input { width: 100%; height: 40px; font-size: 12px; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; flex: none; }
+        .login-card input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 10%, transparent); outline: none; }
+        .login-btn { width: 100%; height: 40px !important; border: none; border-radius: var(--button-radius); cursor: pointer; font-size: 11px; font-weight: 800; color: var(--surface); transition: opacity 0.2s; flex: none; }
+        .login-btn:hover { opacity: 0.88; }
+        .login-btn-primary { background: var(--gradient-primary); }
+        .login-btn-google { background: var(--google-blue); display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; box-shadow: 0 2px 6px color-mix(in srgb, var(--google-blue) 35%, transparent); }
+        .login-btn-google .g-icon { background: var(--surface); border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+        .login-btn-danger { background: var(--danger); }
+        .login-error { color: var(--danger); font-size: 10px; font-weight: 700; min-height: 14px; }
+
+        #boot-splash { position: fixed; inset: 0; z-index: 10000; background: var(--gradient-boot); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; transition: opacity .35s ease; }
+        #boot-splash.hide { opacity: 0; pointer-events: none; }
+        #boot-splash img { height: 56px; width: auto; filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--black) 35%, transparent)); }
+        #boot-splash .boot-title { color: var(--surface); font-weight: 900; font-size: 1.05em; letter-spacing: 2px; }
+        #boot-splash .boot-sub { color: var(--text-lavender); font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+        .boot-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid color-mix(in srgb, var(--surface) 15%, transparent); border-top-color: var(--cyan); animation: bootspin .8s linear infinite; }
+        @keyframes bootspin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="boot-splash">
+        <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/Latam-airlines-logo-light.svg" alt="LATAM Airlines">
+        <div class="boot-title">CABIN FURNISHINGS REPORT</div>
+        <div class="boot-spinner"></div>
+        <div class="boot-sub" id="boot-sub-text">CONECTANDO CON EL SERVIDOR...</div>
+    </div>
+
+    <datalist id="descripciones-list"></datalist>
+    <datalist id="pn-list"></datalist>
+    <datalist id="ata-list"></datalist>
+    <datalist id="ipc-list"></datalist>
+    <datalist id="planes-datalist"></datalist>
+
+    <div id="login-obligatorio" class="login-screen" style="display:none;">
+        <div class="login-card">
+            <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/latam-airlines-logo.svg" alt="LATAM Airlines">
+            <div id="login-card-title" class="login-title">CABIN FURNISHINGS REPORT</div>
+            <div class="login-sub">ACCESO RESTRINGIDO · PERSONAL AUTORIZADO</div>
+            <button id="login-google-btn" class="login-btn login-btn-google" onclick="doGoogleLogin()"><span class="g-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path fill="var(--google-blue)" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="var(--google-green)" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="var(--google-yellow)" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="var(--google-red)" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></span> ENTRAR CON GOOGLE</button>
+            <div id="login-google-sub" class="login-sub" style="font-size: 9px; margin-top: 2px;">USA TU CUENTA CORPORATIVA DE GOOGLE</div>
+            <div id="login-error-msg" class="login-error"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-bar no-print">
+            <div class="top-bar-left">
+                <button type="button" id="btn-mode-toggle" class="btn-accent btn-top" onclick="toggleMode()">👤 USUARIO</button>
+                <span id="logged-user" class="leader-only" style="font-size: 10px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); padding: 0 10px; border-radius: var(--button-radius); background: var(--surface-soft); display: none; align-items: center; height: var(--button-height); box-sizing: border-box; margin: 0;"></span>
+                <button type="button" id="btn-logout" class="btn-danger-outline" onclick="logoutFull()" style="width:28px; min-width:28px; padding:0; display:none; font-size:14px; flex:none;">✖</button>
+                <button type="button" id="btn-check-mode" class="btn-outline btn-check-mode leader-only" onclick="toggleCheckMode()" style="display:none; padding:0 10px; font-size:10px;">☑️ MODO CHECK</button>
+                <button type="button" id="btn-gestor-pn" class="btn-outline leader-only" onclick="openEffManager()" style="padding:0 10px; font-size:10px;">⚙️ GESTOR DE P/N</button>
+                <button type="button" id="btn-admin" class="btn-outline leader-only" onclick="openAdminModal()" style="display:none; padding:0 10px; font-size:10px;" title="Administrar usuarios autorizados">⚙ ADMIN</button>
+            </div>
+        </div>
+
+        <div class="main-header-wrapper">
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/latam-airlines-logo.svg" alt="LATAM Logo">
+            </div>
+            <h1 class="document-header" title="Cabin Furnishings Report">CFR<span style="font-size: 9px; font-weight: 600; color: var(--comment); letter-spacing: 1.2px;">CABIN FURNISHINGS REPORT</span></h1>
+        </div>
+
+        <div class="plane-selector-card">
+            <div class="selector-info">
+                <label>⚙️ 1. SELECCIONE EL AVIÓN</label>
+                <div class="selector-row">
+                    <input type="text" id="plane-select" oninput="onPlaneInput(this)" class="title-select" list="planes-datalist" placeholder="-- ESCRIBA O ELIJA MATRÍCULA --" autocomplete="off">
+                    <span id="plane-eff-badge" class="badge-eff" style="display: none;"></span>
+                </div>
+            </div>
+            <div class="selector-actions leader-only">
+                <button class="btn-leader" onclick="openPlaneModal(false)">➕ NUEVO AVIÓN</button>
+                <button class="btn-outline" id="btn-edit-plane" onclick="openPlaneModal(true)" style="display: none;">✏️ EDITAR</button>
+                <button class="btn-danger-outline" id="btn-delete-plane" onclick="deleteAvion()" style="display: none;">🗑️ BORRAR</button>
+            </div>
+        </div>
+
+        <div id="main-plane-area" style="display: none;">
+            
+            <div class="plane-svg-container">
+                <div class="svg-toggles">
+                    <button type="button" class="svg-toggle-btn active" id="btn-cabina" onclick="switchSVG('CABINA')">✈️ CABINA</button>
+                    <button type="button" class="svg-toggle-btn" id="btn-cockpit" onclick="switchSVG('COCKPIT')">💺 COCKPIT</button>
+                </div>
+                <div style="text-align: center; font-size: 10px; font-weight: bold; color: var(--comment); margin-bottom: 5px;">2. SELECCIONE UNA ZONA DEL AVIÓN (OPCIONAL)</div>
+                <div id="plane-svg-wrapper" style="width: 100%; display: flex; justify-content: center; align-items: center; min-height: 150px; flex-direction: column;">
+                    <span style="color: var(--primary); font-weight: bold; font-size: 10px;">Cargando DWG... ✈️</span>
+                </div>
+            </div>
+            
+            <div id="zone-filter-alert"></div>
+            
+            <div id="plane-actions-bar" class="leader-only" style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <button class="btn-leader" onclick="openAddCustomPartModal()">➕ AÑADIR COMPONENTE (SOLO ESTE AVIÓN)</button>
+            </div>
+            
+            <div class="pn-grid" id="pn-grid-container"></div>
+        </div>
+
+        <div id="welcome-area" class="no-results">
+            Seleccione o escriba una matrícula en el buscador superior para cargar el avión y sus componentes.
+        </div>
+    </div>
+
+    <div id="prompt-modal" class="modal" style="z-index: 1200;">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header" id="prompt-title">INGRESA EL NOMBRE</div>
+            <input type="text" id="prompt-input" autocomplete="off" onkeypress="if(event.key === 'Enter') document.getElementById('prompt-save-btn').click()">
+            <div class="modal-footer">
+                <button class="btn-outline btn-modal-action" onclick="closePromptModal()">CANCELAR</button>
+                <button class="btn-leader btn-modal-action" id="prompt-save-btn">GUARDAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+    <div class="modal-content admin-modal-content">
+        <div class="modal-header admin-modal-header">⚙ ADMIN · USUARIOS AUTORIZADOS</div>
+        <div class="admin-modal-layout">
+            <div class="admin-side">
+                <div class="admin-card">
+                    <div class="admin-card-title">AGREGAR NUEVO USUARIO</div>
+                    <input type="text" id="admin-name" class="admin-field" placeholder="USUARIO · EJ: juan.perez@latam.cl" autocomplete="off" onkeypress="if(event.key === 'Enter') adminAddUser()">
+                    <input type="text" id="admin-realname" class="admin-field" placeholder="NOMBRE REAL · EJ: JUAN PEREZ" autocomplete="off" onkeypress="if(event.key === 'Enter') adminAddUser()">
+                    <div class="admin-role-grid">
+                        <label class="admin-role-option"><input type="checkbox" id="admin-is-user" checked> USUARIO</label>
+                        <label class="admin-role-option"><input type="checkbox" id="admin-is-tech"> TÉCNICO</label>
+                        <label class="admin-role-option"><input type="checkbox" id="admin-is-tl"> TL</label>
+                        <label class="admin-role-option"><input type="checkbox" id="admin-is-admin"> ADMIN</label>
+                    </div>
+                </div>
+                <button class="btn-leader admin-add-button" onclick="adminAddUser()">AGREGAR USUARIO</button>
+            </div>
+            <div class="admin-list-panel">
+                <div class="admin-list-title">USUARIOS DEL SISTEMA</div>
+                <input type="text" id="admin-search" class="admin-search" placeholder="🔍 BUSCAR USUARIO O NOMBRE REAL..." autocomplete="off" oninput="refreshAdminList()">
+                <div id="admin-list" class="admin-user-list"></div>
+            </div>
+        </div>
+        <div class="modal-footer admin-modal-footer">
+            <button class="btn-outline" onclick="closeModal('admin-modal')">CERRAR</button>
+        </div>
+    </div>
+</div>
+
+    <div id="confirm-modal" class="modal" style="z-index: 1200;">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">⚠️ CONFIRMACIÓN</div>
+            <p id="confirm-message" style="text-align:center; font-weight:800; color:var(--primary); font-size:13px; margin-bottom:18px;"></p>
+            <div class="modal-footer">
+                <button class="btn-outline" id="confirm-cancel-btn" onclick="closeConfirm(false)">CANCELAR</button>
+                <button id="confirm-ok-btn" style="background: var(--danger); color: var(--surface);" onclick="closeConfirm(true)">CONFIRMAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="eff-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="color: var(--leader-color);">⚙️ GESTOR DE EFECTIVIDAD</span>
+                <button onclick="closeModal('eff-modal')" style="background:none; color:var(--comment); font-size:18px; padding:0; width: 28px; height: var(--button-height); box-shadow: none;">✖</button>
+            </div>
+            
+            <div class="modal-form-row">
+                <div class="modal-form-group">
+                    <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">SELECCIONAR CATÁLOGO DE EFECTIVIDAD:</label>
+                    <select id="modal-eff-select" onchange="loadEffIntoModal()">
+                        <option value="">-- ELIJA UN CATÁLOGO --</option>
+                    </select>
+                </div>
+                <button class="btn-outline" onclick="renameCatalog()">✏️ EDITAR NOMBRE</button>
+                <button class="btn-leader" onclick="createNewCatalog()">➕ CREAR NUEVO</button>
+            </div>
+
+            <div id="eff-components-area" style="display: none;">
+                <p style="font-size: 10px; color: var(--comment); margin-top: 0; display:flex; justify-content:space-between; flex-wrap: wrap; gap: 10px; padding-bottom: 10px;">
+                    <span><b>APLICABILIDAD:</b> En blanco aplica a todos. Filtros permitidos ej: <code>015-018, 019-050</code>.</span>
+                    <span id="display-catalog-name" style="font-weight:bold; color:var(--primary);"></span>
+                </p>
+                
+                <div class="table-headers" id="eff-headers">
+                    <div class="col-desc">DESCRIPCIÓN</div>
+                    <div class="col-pn">P/N</div>
+                    <div class="col-pos">UBICACIÓN</div>
+                    <div class="col-ata">CMM</div>
+                    <div class="col-ipc">IPC</div>
+                    <div class="col-app">APLICABILIDAD</div>
+                    <div style="width: 28px;"></div>
+                </div>
+
+                <div id="eff-components-container"></div>
+
+                <button class="btn-outline" onclick="addComponentRow('eff-components-container', '', true, 'standard', '', '', '', '', '', '', null)" style="width: 100%; margin-top: 10px; border-style: dashed;">+ AÑADIR NUEVO P/N</button>
+                
+                <div class="modal-footer">
+                    <button class="btn-danger-outline" onclick="deleteEfectividad()" style="margin-right: auto;">🗑️ ELIMINAR CATÁLOGO</button>
+                    <button class="btn-outline" onclick="closeModal('eff-modal')">CANCELAR</button>
+                    <button class="btn-leader" onclick="saveEfectividadData()">💾 GUARDAR CATÁLOGO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="avion-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modal-title" style="color: var(--leader-color);">✈️ AGREGAR / EDITAR AVIÓN</span>
+                <button onclick="closeModal('avion-modal')" style="background:none; color:var(--comment); font-size:18px; padding:0; width: 28px; height: var(--button-height); box-shadow: none;">✖</button>
+            </div>
+            
+            <div class="modal-form-row">
+                <div class="modal-form-group">
+                    <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">MATRÍCULA:</label>
+                    <input type="text" id="modal-plane-reg" placeholder="EJ: CC-BEM" maxlength="6" oninput="formatMatricula(this)">
+                </div>
+                <div class="modal-form-group">
+                    <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">EFECTIVIDAD DEL AVIÓN (EJ: 019):</label>
+                    <input type="text" id="modal-plane-appcode" placeholder="019" maxlength="3" onchange="handleEffChange()" style="border-color: var(--leader-color); background-color: var(--surface-soft);">
+                </div>
+                <div style="flex:1; text-align:right; font-size:10px; color:var(--comment); min-width: 250px;">
+                    El sistema asociará automáticamente las partes que cumplan el código de aplicabilidad configurado en el Gestor.
+                </div>
+            </div>
+
+            <div style="font-size: 10px; font-weight: bold; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px;">CONFIGURACIÓN RESULTANTE (HERENCIA + EXCEPCIONES):</div>
+            
+            <div class="table-headers" id="plane-headers">
+                <div class="col-desc">DESCRIPCIÓN</div>
+                <div class="col-pn">P/N</div>
+                <div class="col-pos">UBICACIÓN</div>
+                <div class="col-ata">CMM</div>
+                <div class="col-ipc">IPC</div>
+                <div style="width: 28px;"></div>
+            </div>
+
+            <div id="plane-components-container"></div>
+
+            <button class="btn-outline" onclick="addComponentRow('plane-components-container', '', false, 'custom', '', '', '', '', '', '', null)" style="width: 100%; margin-top: 10px; border-style: dashed; color: var(--indigo); border-color: var(--border-indigo);">+ AÑADIR P/N CUSTOM (SOLO ESTE AVIÓN)</button>
+            
+            <div class="modal-footer">
+                <button class="btn-outline" onclick="closeModal('avion-modal')">CANCELAR</button>
+                <button class="btn-leader" onclick="savePlaneData()">💾 GUARDAR AVIÓN</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="single-part-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; margin: 10% auto;">
+            <div class="modal-header">
+                <span id="sp-modal-title" style="color: var(--leader-color);">✏️ EDITAR COMPONENTE</span>
+                <button onclick="closeModal('single-part-modal')" style="background:none; color:var(--comment); font-size:18px; padding:0; width: 28px; height: var(--button-height); box-shadow: none;">✖</button>
+            </div>
+            <div class="modal-form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">DESCRIPCIÓN:</label>
+                <input type="text" id="sp-desc" list="descripciones-list" style="width: 100%;">
+            </div>
+            <div class="modal-form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">P/N ACTUAL / FÍSICO:</label>
+                <input type="text" id="sp-pn" list="pn-list" style="width: 100%;">
+            </div>
+            <div class="modal-form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">ZONA(S):</label>
+                <div class="custom-multiselect" style="width: 100%;">
+                    <div class="multiselect-header" id="sp-pos-header" onclick="toggleMulti(this)">ZONAS<span style="font-size:8px; float:right;"> ▼</span></div>
+                    <div class="multiselect-options" id="sp-pos-options">
+                        <label><input type="checkbox" value="FWD" onchange="updateMultiValue(this)"> FWD</label>
+                        <label><input type="checkbox" value="AFT" onchange="updateMultiValue(this)"> AFT</label>
+                        <label><input type="checkbox" value="MCD CENTRAL" onchange="updateMultiValue(this)"> MCD CENTRAL</label>
+                        <label><input type="checkbox" value="MCD LH" onchange="updateMultiValue(this)"> MCD LH</label>
+                        <label><input type="checkbox" value="MCD RH" onchange="updateMultiValue(this)"> MCD RH</label>
+                        <label><input type="checkbox" value="CAPTAIN SEAT" onchange="updateMultiValue(this)"> CAPTAIN SEAT</label>
+                        <label><input type="checkbox" value="F/O SEAT" onchange="updateMultiValue(this)"> F/O SEAT</label>
+                        <label><input type="checkbox" value="3RD OCCUPANT SEAT" onchange="updateMultiValue(this)"> 3RD OCCUPANT SEAT</label>
+                        <label><input type="checkbox" value="4TH OCCUPANT SEAT" onchange="updateMultiValue(this)"> 4TH OCCUPANT SEAT</label>
+                    </div>
+                    <input type="hidden" id="sp-pos">
+                </div>
+            </div>
+            <div class="modal-form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">CMM:</label>
+                <input type="text" id="sp-ata" list="ata-list" style="width: 100%;">
+            </div>
+            <div class="modal-form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">IPC:</label>
+                <input type="text" id="sp-ipc" list="ipc-list" style="width: 100%;">
+            </div>
+            <input type="hidden" id="sp-id">
+            <div class="modal-footer" style="margin-top: 20px;">
+                <button class="btn-danger-outline leader-only" id="btn-sp-revert" onclick="revertSinglePart()" style="margin-right: auto; display:none;">↺ REVERTIR AL ESTÁNDAR</button>
+                <button class="btn-outline" onclick="closeModal('single-part-modal')">CANCELAR</button>
+                <button class="btn-leader" onclick="saveSinglePart()">💾 GUARDAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">✅ Acción realizada con éxito</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+        // C5 App Check: igual que PD, dominios autorizados solo protege Login. Para proteger DB activa ReCaptcha en Firebase > App Check
+        // import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app-check.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+        // C4 CORREGIDO: Tu número de proyecto real es 449926089536 (confirmado)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfUj9h6YFwtxqAGITh6dBM8vYljGSDySg",
+            authDomain: "cfr-latam.firebaseapp.com",
+            databaseURL: "https://cfr-latam-default-rtdb.firebaseio.com",
+            projectId: "cfr-latam",
+            storageBucket: "cfr-latam.firebasestorage.app",
+            messagingSenderId: "317443737432",
+            appId: "1:317443737432:web:79df0cbf59cc015d53872d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        // const appCheck = initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider('TU_SITE_KEY'), isTokenAutoRefreshEnabled: true });
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        setPersistence(auth, browserLocalPersistence).catch((e) => console.warn('Persistence error:', e));
+
+        // El acceso es SIEMPRE con Google (obligatorio y permanente).
+        
+        const flotaRef = ref(db, 'pns_aviones');
+        const effRef = ref(db, 'efectividades');
+
+        let flotaDB = {};
+        let efectividadesDB = {};
+        
+        let currentLoadedReg = null; 
+        let currentZoneFilter = null; 
+        let currentEditingCatalog = null;
+        let isTeamLeader = false;
+        let isCheckMode = false;
+        let isInitialLoad = true; 
+
+        let techUsers = [];
+        let correosAutorizados = [];
+        let adminList = [];
+        let superAdmins = [];
+
+        const superAdminsRef = ref(db, 'super_admin');
+
+        // La identidad es SIEMPRE el correo completo. Se aceptan también el alias sin
+        // dominio para no dejar fuera cuentas antiguas ni listas ya cargadas en Firebase.
+        function normalizeEmail(email) {
+            return (email || '').trim().toLowerCase();
+        }
+        function aliasCandidates(id) {
+            const n = normalizeEmail(id);
+            return n.includes('@') ? [n, n.split('@')[0]] : [n];
+        }
+        function isSuperAdmin(name) {
+            if (!name) return false;
+            const lista = Array.isArray(superAdmins) ? superAdmins : Object.values(superAdmins||{});
+            const correo = normalizeEmail(name);
+            if (!correo.includes('@')) return false; // el super admin solo se reconoce por su correo completo, nunca por el alias
+            return lista.some(v => {
+                const superCorreo = normalizeEmail(v);
+                return superCorreo === correo || sanitizeKey(superCorreo) === sanitizeKey(correo);
+            });
+        }
+
+        let uidLinked = false;   // el indice de uids solo se escribe una vez por carga
+        let usuariosDB = {};
+        // Resuelve la clave del registro: correo completo y, si la cuenta viene del formato
+        // antiguo (guardada sin dominio), su alias. Evita que nadie quede fuera tras el cambio.
+        function sanitizeKey(k) {
+            return String(k).replace(/[.#$\[\]\/]/g, '_');
+        }
+            function userKeyFor(id) {
+            const n = normalizeEmail(id);
+            const alias = n.split('@')[0];
+            // las claves guardadas en firebase van sanitizadas: hay que probar ambas formas
+            const cands = (alias && alias !== n) ? [n, sanitizeKey(n), alias, sanitizeKey(alias)] : [n, sanitizeKey(n)];
+            return cands.find(k => usuariosDB[k]) || cands[0];
+        }
+        function displayNameFor(id) {
+            const rec = usuariosDB[userKeyFor(id)];
+            if (rec && rec.nombre) return rec.nombre.trim().toUpperCase();
+            return normalizeEmail(id).split('@')[0].replace(/[._]+/g, ' ').toUpperCase();
+        }
+    function updateUserButton() {
+        const btn = document.getElementById('btn-mode-toggle');
+        if (!btn) return;
+        const connected = sessionUser() || '';
+        const alias = displayNameFor(connected) || 'USUARIO';
+        const superAdmin = isSuperAdmin(connected);
+        if (isTeamLeader) {
+            btn.innerText = superAdmin ? `🛡️ ${alias}` : `👤 ${alias}`;
+            btn.title = `TEAM LEADER: ${alias}${superAdmin ? ' (SUPER ADMIN)' : ''}`;
+        } else {
+            btn.innerText = `👤 ${alias}`;
+            btn.title = connected ? `CONECTADO: ${alias}` : '';
+        }
+    }
+        function userRec(user) {
+            const key = userKeyFor(user);
+            if (!usuariosDB[key]) usuariosDB[key] = { nombre: '', usuario: false, tech: false, tl: false, admin: false, uid: '', email: normalizeEmail(user) };
+            return usuariosDB[key];
+        }
+        function syncRoleArrays() {
+            techUsers = Object.keys(usuariosDB).filter(u => usuariosDB[u].tech || usuariosDB[u].tl || usuariosDB[u].admin);
+            correosAutorizados = Object.keys(usuariosDB).filter(u => usuariosDB[u].tl);
+            adminList = Object.keys(usuariosDB).filter(u => usuariosDB[u].admin);
+        }
+        function buildUsuarios() {
+            const out = {};
+            Object.keys(usuariosDB).sort().forEach(u => {
+                const rec = usuariosDB[u];
+                const item = {
+                    u,
+                    nombre: rec.nombre || '',
+                    usuario: !!rec.usuario,
+                    tech: !!rec.tech,
+                    tl: !!rec.tl,
+                    admin: !!rec.admin
+                };
+                if (rec.uid) item.uid = rec.uid;
+                if (rec.email) item.email = rec.email;
+                out[sanitizeKey(u)] = item;
+            });
+            return out;
+        }
+        function saveUsuarios() {
+            dbSet(ref(db, 'usuarios'), buildUsuarios());
+        }
+        const tlUsersRef = ref(db, 'usuarios');
+
+        let rolesUnsubs = [];
+        let lastRolesUid = '__none__';
+        function subscribeRoles() {
+            const uid = (auth.currentUser && auth.currentUser.uid) || null;
+            if (uid === lastRolesUid) return;
+            lastRolesUid = uid;
+            rolesUnsubs.forEach(u => { try { u(); } catch (e) {} });
+            rolesUnsubs = [];
+            rolesUnsubs.push(onValue(superAdminsRef, (snapshot) => {
+                const v = snapshot.val();
+                if(Array.isArray(v)) superAdmins = v;
+                else if(v && typeof v==='object') superAdmins = Object.values(v);
+                else superAdmins = [];
+                updateAdminUI();
+                refreshAdminListIfOpen();
+                if (typeof evaluateGate === 'function') evaluateGate();
+            }, (e) => console.warn('super_admin:', e.code)));
+            rolesUnsubs.push(onValue(tlUsersRef, (snapshot) => {
+                const raw = snapshot.val();
+                usuariosLoaded = true;
+                usuariosDB = {};
+                const ingest = (name, e) => {
+                    if (!name) return;
+                    if (typeof e === 'string') e = {};
+                    const email = normalizeEmail(e.email || '');
+                    const legacy = normalizeEmail(name);
+                    const key = email || legacy;   // clave canónica = correo completo
+                    if (isSuperAdmin(key)) return;
+                    // Si el registro antiguo traía correo, su clave vieja se sustituye por la nueva
+                    if (email && legacy !== email && usuariosDB[legacy]) delete usuariosDB[legacy];
+                    usuariosDB[key] = {
+                        nombre: e.nombre || '',
+                        usuario: !!(e.usuario || e.acceso),
+                        tech: !!e.tech,
+                        tl: !!e.tl,
+                        admin: !!e.admin,
+                        uid: e.uid || '',
+                        email: email
+                    };
+                };
+                if (Array.isArray(raw)) {
+                    raw.filter(Boolean).forEach(e => ingest(typeof e === 'string' ? e : e.u, e));
+                } else if (raw && typeof raw === 'object') {
+                    Object.keys(raw).forEach(k => {
+                        const e = raw[k];
+                        if (!e) return;
+                        ingest((typeof e === 'string') ? k.replace(/%2E/g, '.') : (e.u || k.replace(/%2E/g, '.')), e);
+                    });
+                }
+                syncRoleArrays();
+                updateAdminUI();
+                refreshAdminListIfOpen();
+                evaluateGate();
+            }, (e) => console.warn('usuarios:', e.code)));
+        }
+        auth.authStateReady().then(()=> subscribeRoles()).catch(()=> subscribeRoles());
+
+function isTechUser() {
+    const u = sessionUser() || '';
+    if (isSuperAdmin(u)) return true;
+    const rec = usuariosDB[userKeyFor(u)] || {};
+    return !!(rec.tech || rec.tl || rec.admin);
+}
+
+function isLeaderOrAdmin() {
+    const u = sessionUser() || '';
+    if (isSuperAdmin(u)) return true;
+    const rec = usuariosDB[userKeyFor(u)] || {};
+    return !!(rec.tl || rec.admin);
+}
+        
+
+
+            
+        const SVG_URLS = {
+            'CABINA': "https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/A320.svg",
+            'COCKPIT': "https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/A320%20COCKPIT.svg"
+        };
+        let currentSVGView = 'CABINA';
+
+        const ZONES_MAP = [
+            { name: 'FWD', id: 'FWD' },
+            { name: 'AFT', id: 'AFT' },
+            { name: 'MCD CENTRAL', id: 'MCD_CENTRAL' },
+            { name: 'MCD LH', id: 'MCD_LH' },
+            { name: 'MCD RH', id: 'MCD_RH' },
+            { name: 'CAPTAIN SEAT', id: 'CAPTAIN' },
+            { name: 'F/O SEAT', id: 'FIRST_OFFICER' },
+            { name: '3RD OCCUPANT SEAT', id: '3RD_OCCUPANT' },
+            { name: '4TH OCCUPANT SEAT', id: '4TH_OCCUPANT' }
+        ];
+
+        // B5 FIX: 100% único - antes Math.random podía repetir, ahora usa timestamp + crypto
+        const generateId = () => 'p_' + Date.now().toString(36) + '_' + (crypto.randomUUID ? crypto.randomUUID().slice(0,8) : Math.random().toString(36).substr(2,9));
+        
+        function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
+        function escapeAttr(str){ return escapeHtml(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        let _lastToastAt = 0;
+        function toastThrottled(msg) {
+            const now = Date.now();
+            if (now - _lastToastAt < 8000) return;
+            _lastToastAt = now;
+            showToast(msg);
+        }
+
+        function dbSet(r, v, label) {
+            return set(r, v).catch((e) => {
+                console.error('FIREBASE WRITE ERROR', e);
+                let msg = '⚠️ NO SE GUARDÓ' + (label ? ' (' + label + ')' : '') + ': ' + (e.code || e.message);
+                if ((e.code || '').includes('permission')) {
+                    msg = !googleUser()
+                        ? '🔒 SIN PERMISO DE ESCRITURA: CIERRA SESIÓN Y ENTRA CON GOOGLE'
+                        : '🔒 SIN PERMISO DE ESCRITURA (' + (e.code || '') + ')';
+                }
+                toastThrottled(msg);
+            });
+        }
+
+        function readErr(err) {
+            console.error('FIREBASE READ ERROR', err);
+            if ((err.code || '').includes('permission') && !googleUser()) evaluateGate(); // sesión caída: vuelve a la puerta de Google
+            toastThrottled('⚠️ SIN ACCESO DE LECTURA (' + err.code + ')');
+        }
+
+        let confirmCallback = null;
+        window.showConfirm = function(message, onConfirm) {
+            confirmCallback = onConfirm || null;
+            document.getElementById('confirm-message').innerText = message;
+            document.getElementById('confirm-modal').style.display = 'block';
+        }
+        window.closeConfirm = function(result) {
+            document.getElementById('confirm-modal').style.display = 'none';
+            const cb = confirmCallback;
+            confirmCallback = null;
+            if (result && cb) cb();
+        }
+
+        window.toggleCheckMode = function() {
+            isCheckMode = !isCheckMode;
+            const btn = document.getElementById('btn-check-mode');
+            if (isCheckMode) {
+                document.body.classList.add('check-mode-active');
+                if (btn) btn.classList.add('active');
+            } else {
+                document.body.classList.remove('check-mode-active');
+                if (btn) btn.classList.remove('active');
+            }
+        };
+
+        function get24hTimestamp() {
+            const now = new Date();
+            const dd = String(now.getDate()).padStart(2, '0');
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const yy = String(now.getFullYear()).slice(-2);
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            return `${dd}/${mm}/${yy} ${hh}:${min}`;
+        }
+
+        window.verifyPart = function(partId) {
+            if (!currentLoadedReg) return;
+            const userName = displayNameFor(sessionUser()) || 'USUARIO';
+            const timestamp = `${get24hTimestamp()} | 👤 ${userName}`;
+            dbSet(ref(db, `pns_aviones/${currentLoadedReg}/verifications/${partId}`), timestamp).then(() => {
+                showToast("✅ Tarjeta Verificada");
+            });
+        };
+
+        window.toggleMulti = function(headerEl) {
+            const optionsDiv = headerEl.nextElementSibling;
+            const isShowing = optionsDiv.classList.contains('show');
+            document.querySelectorAll('.multiselect-options').forEach(el => {
+                el.classList.remove('show');
+                el.classList.remove('drop-up');
+            });
+            if (!isShowing) {
+                optionsDiv.classList.add('show');
+                const rect = headerEl.getBoundingClientRect();
+                if (rect.bottom + 180 + 4 > window.innerHeight) {
+                    optionsDiv.classList.add('drop-up');
+                }
+            }
+        };
+        
+        window.updateMultiValue = function(checkbox) {
+            const wrapper = checkbox.closest('.custom-multiselect');
+            const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+            const header = wrapper.querySelector('.multiselect-header');
+            const checked = Array.from(wrapper.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+            hiddenInput.value = checked.join(', ');
+            header.innerHTML = checked.length ? checked.join(', ') : 'ZONAS';
+            
+            const span = document.createElement('span');
+            span.innerHTML = ' ▼'; span.style.fontSize = '8px'; span.style.float = 'right';
+            header.appendChild(span);
+        };
+        
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.custom-multiselect')) {
+                document.querySelectorAll('.multiselect-options').forEach(el => {
+                    el.classList.remove('show');
+                    el.classList.remove('drop-up');
+                });
+            }
+        });
+
+        window.switchSVG = function(view) {
+            if (currentSVGView === view) return;
+            currentSVGView = view;
+            
+            document.getElementById('btn-cabina').classList.toggle('active', view === 'CABINA');
+            document.getElementById('btn-cockpit').classList.toggle('active', view === 'COCKPIT');
+            
+            loadPlaneSVG();
+        };
+
+        async function loadPlaneSVG() {
+            try {
+                const wrapper = document.getElementById('plane-svg-wrapper');
+                wrapper.innerHTML = `<span style="color: var(--primary); font-weight: bold; font-size: 10px;">Cargando DWG ${currentSVGView}... ✈️</span>`;
+                
+                const response = await fetch(SVG_URLS[currentSVGView]);
+                if (!response.ok) throw new Error("SVG Network error");
+                const svgText = await response.text();
+                
+                wrapper.innerHTML = svgText;
+                const svgElement = wrapper.querySelector('svg');
+                if(svgElement) {
+                    svgElement.style.width = '100%'; svgElement.style.height = 'auto'; svgElement.style.maxHeight = '300px'; 
+                }
+                
+                ZONES_MAP.forEach(z => {
+                    const btn = document.getElementById(z.id) || document.getElementById(`btn-${z.name.toLowerCase().replace(/ /g, '-')}`);
+                    if (btn) {
+                        btn.classList.add('svg-group');
+                        btn.onclick = () => toggleZoneFilter(z.name);
+                        btn.querySelectorAll('path, rect, polygon, circle, g').forEach(p => p.classList.add('svg-clickable'));
+                    }
+                });
+
+                if (currentZoneFilter) {
+                    const activeZoneObj = ZONES_MAP.find(z => z.name === currentZoneFilter);
+                    if (activeZoneObj) {
+                        const btn = document.getElementById(activeZoneObj.id);
+                        if (btn) btn.classList.add('active-zone');
+                    }
+                }
+            } catch (error) {
+                document.getElementById('plane-svg-wrapper').innerHTML = `<div style="color: var(--danger); font-weight: bold; padding: 20px;">Error al cargar esquema ${currentSVGView}.</div>`;
+            }
+        }
+        loadPlaneSVG();
+
+        window.toggleZoneFilter = function(zone) {
+            if (!currentLoadedReg) return;
+            
+            document.querySelectorAll('.svg-group').forEach(g => g.classList.remove('active-zone'));
+            
+            if (currentZoneFilter === zone) { 
+                currentZoneFilter = null; 
+            } else { 
+                currentZoneFilter = zone; 
+                const activeZoneObj = ZONES_MAP.find(z => z.name === zone);
+                if (activeZoneObj) {
+                    const btn = document.getElementById(activeZoneObj.id) || document.getElementById(`btn-${activeZoneObj.name.toLowerCase().replace(/ /g, '-')}`);
+                    if (btn) btn.classList.add('active-zone');
+                }
+            }
+            renderPlaneData();
+        }
+
+
+function activateLeaderUI() {
+    isTeamLeader = true; 
+    document.body.classList.add('team-leader-mode');
+    
+    const btnToggle = document.getElementById('btn-mode-toggle');
+    updateUserButton();
+    btnToggle.style.background = "";
+    btnToggle.style.color = "";
+    btnToggle.style.border = "";
+    btnToggle.classList.add('btn-mode-leader');
+    
+    // 1. Mostrar botón de salir (✖)
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) btnLogout.style.display = 'inline-flex';
+
+    // 2. MOSTRAR DE INMEDIATO EL BOTÓN MODO CHECK AL INICIAR SESIÓN
+    const btnCheckMode = document.getElementById('btn-check-mode');
+    if (btnCheckMode) btnCheckMode.style.display = 'inline-flex';
+
+    const loggedUserSpan = document.getElementById('logged-user');
+    if (loggedUserSpan) loggedUserSpan.style.display = 'none';
+
+    updateAdminUI();
+}
+
+        function deactivateLeaderUI() {
+            isTeamLeader = false; document.body.classList.remove('team-leader-mode');
+            const btnAdmin = document.getElementById('btn-admin');
+            if (btnAdmin) btnAdmin.style.display = 'none';
+            const btnToggle = document.getElementById('btn-mode-toggle');
+            updateUserButton();
+            btnToggle.style.background = "";
+            btnToggle.style.color = "";
+            btnToggle.style.border = "";
+            btnToggle.classList.remove('btn-mode-leader');
+            
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) btnLogout.style.display = 'none';
+
+            const btnCheckMode = document.getElementById('btn-check-mode');
+            if (btnCheckMode) btnCheckMode.style.display = 'none';
+
+            const loggedUserSpan = document.getElementById('logged-user');
+            if (loggedUserSpan) loggedUserSpan.style.display = 'none';
+
+            if (isCheckMode) toggleCheckMode();
+            updateAdminUI();
+        }
+
+        function toggleMode() {
+            if (isTeamLeader) { deactivateLeaderUI(); return; }
+            // La identidad viene solo de Google: si no hay sesión, se muestra la pantalla de login.
+            const u = sessionUser();
+            if (!u) {
+                showToast('🔒 INICIO DE SESIÓN OBLIGATORIO: USA LA PANTALLA DE LOGIN');
+                return;
+            }
+            if (isAuthorizedUser(u)) activateLeaderUI();
+        }
+
+        let usuariosLoaded = false;
+        let dataAttached = false;
+        let splashHidden = false;
+        const staticUnsubs = [];
+        let sesionVigente = '';
+
+        onAuthStateChanged(auth, (user) => {
+            sesionVigente = (user && user.email) || '';
+            subscribeRoles();
+            evaluateGate();
+        });
+
+        // La sesion de Google se comparte entre PD y CFR (mismo dominio). Esta app no recibe el aviso
+        // cuando el login o el logout ocurre en la otra, asi que al volver a enfocarla se compara.
+        // Aviso entre PD y CFR: localStorage dispara 'storage' en las OTRAS pestanas del mismo dominio,
+        // que es la unica via fiable (auth.currentUser queda congelado en memoria si la sesion cambia fuera).
+        const AVISO_SESION = 'aviso_sesion_compartida';
+        function avisarCambioSesion() { try { localStorage.setItem(AVISO_SESION, String(Date.now())); } catch (e) {} }
+        function sincronizarSesion() {
+            const actual = (auth.currentUser && auth.currentUser.email) || '';
+            if (actual !== sesionVigente) location.reload();
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) sincronizarSesion(); });
+        window.addEventListener('focus', sincronizarSesion);
+        window.addEventListener('storage', (e) => { if (e.key === AVISO_SESION) location.reload(); });
+        function googleUser() {
+            try {
+                const cu = auth.currentUser;
+                if (cu && Array.isArray(cu.providerData) && cu.providerData.some(p => p.providerId === 'google.com')) return cu;
+            } catch (e) {}
+            return null;
+        }
+        function sessionUser() {
+            const g = googleUser();
+            return (g && g.email) ? normalizeEmail(g.email) : null;
+        }
+        function canLogin(u) {
+            if (!u) return false;
+            if (isSuperAdmin(u)) return true;
+            const rec = usuariosDB[userKeyFor(u)];
+            return !!(rec && (rec.usuario || rec.tech || rec.tl || rec.admin));
+        }
+        function hasLeaderRole(u) {
+            if (!u) return false;
+            if (isSuperAdmin(u)) return true;
+            const rec = usuariosDB[userKeyFor(u)] || {};
+            return !!rec.tl || !!rec.admin;
+        }
+        // Un tecnico tambien entra a la UI completa: modo check, crear avion y tarjetas de componentes
+        function isAuthorizedUser(u) {
+            if (!u) return false;
+            if (isSuperAdmin(u)) return true;
+            const rec = usuariosDB[userKeyFor(u)] || {};
+            return !!(rec.tech || rec.tl || rec.admin);
+        }
+
+        function attachData() {
+            if (dataAttached) return;
+            dataAttached = true;
+            staticUnsubs.push(
+                onValue(effRef, (snapshot) => {
+                    efectividadesDB = snapshot.val() || {};
+                    updateSelector();
+                    if (currentLoadedReg) renderPlaneData();
+                }, readErr),
+                onValue(flotaRef, (snapshot) => {
+                    flotaDB = snapshot.val() || {};
+                    updateSelector();
+                    hideSplash();
+
+                    if (isInitialLoad) {
+                        isInitialLoad = false;
+                        const memorizedPlane = localStorage.getItem('saved_plane_reg');
+                        if (memorizedPlane && flotaDB[memorizedPlane]) {
+                            document.getElementById('plane-select').value = memorizedPlane;
+                            currentLoadedReg = memorizedPlane;
+                            document.getElementById('welcome-area').style.display = 'none';
+                            document.getElementById('main-plane-area').style.display = 'block';
+                            renderPlaneData();
+                        }
+                    } else {
+                        if (currentLoadedReg && flotaDB[currentLoadedReg]) renderPlaneData();
+                        else if (currentLoadedReg && !flotaDB[currentLoadedReg]) {
+                            document.getElementById('plane-select').value = "";
+                            resetView();
+                        }
+                    }
+                }, readErr)
+            );
+        }
+
+        function detachData() {
+            if (!dataAttached) return;
+            dataAttached = false;
+            isInitialLoad = true;
+            staticUnsubs.forEach(u => { try { u(); } catch (e) {} });
+            staticUnsubs.length = 0;
+            flotaDB = {};
+            efectividadesDB = {};
+            currentLoadedReg = null;
+            currentZoneFilter = null;
+            resetView();
+            updateSelector();
+        }
+
+        function hideSplash() {
+            if (splashHidden) return;
+            splashHidden = true;
+            const sp = document.getElementById('boot-splash');
+            if (sp) {
+                sp.classList.add('hide');
+                setTimeout(() => { sp.style.display = 'none'; }, 400);
+            }
+        }
+        // P3 FIX: Solo oculta splash cuando llegan datos reales (antes se ocultaba a los 3.5s aunque siguiera "Conectando")
+        // Fallback solo si Firebase no responde en 15s para no quedar pegado eternamente
+        setTimeout(() => { if(!splashHidden) console.warn('Splash fallback 15s'); hideSplash(); }, 15000);
+
+        function evaluateGate() {
+    const overlay = document.getElementById('login-obligatorio');
+    if (!overlay) return;
+    const btnLogout = document.getElementById('btn-logout');
+
+    // INICIO DE SESIÓN CON GOOGLE OBLIGATORIO (único modo)
+    const u = sessionUser();
+    if (u && !usuariosLoaded) {
+        setTimeout(() => evaluateGate(), 500);
+        return;
+    }
+
+    if (u && canLogin(u)) {
+        // La sesion puede venir restaurada (compartida con la otra app) sin pasar por el boton:
+        // hay que asegurar el indice de uids o las reglas no dareian permisos.
+        const g = googleUser();
+        if (g && !uidLinked) { uidLinked = true; linkUid(g, u).catch(() => {}); }
+        overlay.style.display = 'none';
+        attachData();
+        if (isAuthorizedUser(u)) {
+            activateLeaderUI();
+        } else {
+            if (isTeamLeader) deactivateLeaderUI();
+            updateUserButton();
+        }
+        updateAdminUI();
+        if (btnLogout) btnLogout.style.display = 'inline-flex';
+        hideSplash();
+        return;
+    }
+
+    detachData();
+    deactivateLeaderUI();
+    const denied = !!u;
+    document.getElementById('login-card-title').innerText = denied ? 'ACCESO NO AUTORIZADO' : 'CABIN FURNISHINGS REPORT';
+    document.getElementById('login-error-msg').innerText = denied ? `${u.toUpperCase()} NO TIENE ACCESO HABILITADO` : '';
+    overlay.style.display = 'flex';
+    hideSplash();
+}
+
+        window.doGoogleLogin = async function() {
+            const err = document.getElementById('login-error-msg');
+            err.innerText = 'ABRIENDO GOOGLE...';
+            try {
+                const provider = new GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const result = await signInWithPopup(auth, provider);
+                err.innerText = 'VERIFICANDO PERMISOS...';
+                const email = normalizeEmail(result.user && result.user.email);
+                if (!email || !email.includes('@')) throw new Error('SIN CORREO EN LA CUENTA GOOGLE');
+                await linkUid(result.user, email);
+                avisarCambioSesion();
+                location.reload();
+            } catch (e) {
+                err.innerText = 'NO SE PUDO INICIAR SESIÓN (' + (e.code || e.message) + '). INTENTA DE NUEVO.';
+            }
+        }
+        async function linkUid(fu, email) {
+            const correo = normalizeEmail(fu.email || email);
+            const key = userKeyFor(correo);
+            // el indice de las reglas debe apuntar siempre a la clave real del registro
+            await dbSet(ref(db, 'uids/' + fu.uid), sanitizeKey(key), 'REGISTRAR UID');
+            const rec = usuariosDB[key];
+            if (!rec) return;
+            let dirty = false;
+            if (fu.uid && rec.uid !== fu.uid) { rec.uid = fu.uid; dirty = true; }
+            if (rec.email !== correo) { rec.email = correo; dirty = true; }
+            if (dirty) {
+                // solo un admin puede escribir usuarios: si no lo es, el indice ya quedo listo
+                try { await set(ref(db, 'usuarios'), buildUsuarios()); } catch (e) {}
+            }
+        }
+        let loggingOut = false;
+        window.logoutFull = async function() {
+            if (loggingOut) return;
+            loggingOut = true;
+            try { await signOut(auth); } catch (e) {}
+            deactivateLeaderUI();
+            avisarCambioSesion();
+            location.reload();
+        }
+
+       function isAdminUser() {
+            const currentUser = sessionUser() || '';
+            return isTeamLeader && (isSuperAdmin(currentUser) || adminList.includes(currentUser));
+        }
+
+       function updateAdminUI() {
+    const currentUser = sessionUser() || '';
+    
+    const btnAdmin = document.getElementById('btn-admin');
+    const btnGestorPn = document.getElementById('btn-gestor-pn');
+    const btnEditPlane = document.getElementById('btn-edit-plane');
+    const btnDeletePlane = document.getElementById('btn-delete-plane');
+    
+    // 🛡️ SOLO ADMIN / SUPER ADMIN
+    const isAdmin = isSuperAdmin(currentUser) || adminList.includes(currentUser);
+    if (btnAdmin) btnAdmin.style.display = (isTeamLeader && isAdmin) ? 'inline-flex' : 'none';
+    
+    // ⚙️ TEAM LEADER O ADMIN (Acepta a TL e impide el acceso a Técnico solo)
+    const isLeader = isLeaderOrAdmin();
+    if (btnGestorPn) btnGestorPn.style.display = (isTeamLeader && isLeader) ? 'inline-flex' : 'none'; // ✅ Ahora evalúa 'isLeader'
+    
+    // ✈️ TEAM LEADER O ADMIN (Editar o Borrar el Avión completo)
+    if (btnEditPlane) btnEditPlane.style.display = (isTeamLeader && isLeader && currentLoadedReg) ? 'inline-flex' : 'none';
+    if (btnDeletePlane) btnDeletePlane.style.display = (isTeamLeader && isLeader && currentLoadedReg) ? 'inline-flex' : 'none';
+    // ↺ Revertir excepcion/pieza custom: solo TL o admin (el tecnico edita la tarjeta, pero no elimina)
+    const btnSpRevert = document.getElementById('btn-sp-revert');
+    if (btnSpRevert) btnSpRevert.style.display = (isTeamLeader && isLeader) ? 'inline-flex' : 'none';
+}
+
+        function refreshAdminListIfOpen() {
+            const modal = document.getElementById('admin-modal');
+            if (modal && modal.style.display === 'block') refreshAdminList();
+        }
+
+        window.openAdminModal = function() {
+            document.getElementById('admin-name').value = '';
+            document.getElementById('admin-realname').value = '';
+            document.getElementById('admin-search').value = '';
+            document.getElementById('admin-is-user').checked = true;
+            document.getElementById('admin-is-tech').checked = false;
+            document.getElementById('admin-is-tl').checked = false;
+            document.getElementById('admin-is-admin').checked = false;
+            document.getElementById('admin-modal').style.display = 'block';
+            refreshAdminList();
+        }
+
+            // Orden del panel: admin, TL, tecnico y despues solo lectura; dentro de cada grupo por nombre
+    function rangoUsuario(u) {
+        const r = usuariosDB[u] || {};
+        return r.admin ? 0 : r.tl ? 1 : r.tech ? 2 : r.usuario ? 3 : 4;
+    }
+    function ordenUsuarios(lista) {
+        return lista.slice().sort((a, b) => {
+            const d = rangoUsuario(a) - rangoUsuario(b);
+            if (d) return d;
+            const na = ((usuariosDB[a] || {}).nombre || a).toLowerCase();
+            const nb = ((usuariosDB[b] || {}).nombre || b).toLowerCase();
+            return na.localeCompare(nb) || a.localeCompare(b);
+        });
+    }
+function refreshAdminList() {
+            const listEl = document.getElementById('admin-list');
+            const q = (document.getElementById('admin-search')?.value || '').trim().toLowerCase();
+            const all = new Set([...Object.keys(usuariosDB), ...correosAutorizados, ...adminList].filter(u => !isSuperAdmin(u)));
+            if (all.size === 0) {
+                listEl.innerHTML = '<div class="admin-empty">SIN USUARIOS AÚN</div>';
+                updateAdminUI();
+                return;
+            }
+            let html = '';
+            for (const user of ordenUsuarios(Array.from(all))) {
+                if (!user) continue;
+                const info = usuariosDB[user] || {};
+                if (q && !user.toLowerCase().includes(q) && !(info.nombre || '').toLowerCase().includes(q)) continue;
+                const nombreReal = (info.nombre || '').trim();
+                const isTech = !!info.tech;
+                const isTl = correosAutorizados.includes(user);
+                const isAdm = adminList.includes(user);
+                const esUsuario = !!info.usuario;
+                const sinAcceso = !isTech && !isTl && !isAdm && !esUsuario;
+                html += `<div class="admin-user-row ${sinAcceso ? 'no-access' : ''}">
+                    <div class="admin-user-main">
+                        <div class="admin-user-copy">
+                            <span class="admin-username">${user.toUpperCase()}</span>
+                            ${nombreReal ? `<span class="admin-realname">${nombreReal}</span>` : ''}
+                        </div>
+                        ${isAdm ? '<span class="admin-role-badge admin">ADMIN</span>' : ''}
+                    </div>
+                    <div class="admin-user-actions">
+                        <button class="btn-action-small admin-user-action ${esUsuario ? 'active-user' : ''}" onclick="adminToggleUsuario('${user}')" title="Quitar/Dar acceso de usuario" aria-pressed="${esUsuario}">👤</button>
+                        <button class="btn-action-small admin-user-action ${isTech ? 'active-tech' : ''}" onclick="adminToggleTech('${user}')" title="Quitar/Dar Rol Técnico" aria-pressed="${isTech}">🛠️</button>
+                        <button class="btn-action-small admin-user-action ${isTl ? 'active-tl' : ''}" onclick="adminToggleTl('${user}')" title="Quitar/Hacer Team Leader" aria-pressed="${isTl}">TL</button>
+                        <button class="btn-action-small admin-user-action admin-action-wide ${isAdm ? 'active-admin' : ''}" onclick="adminToggleAdmin('${user}')" title="Quitar/Hacer Admin" aria-pressed="${isAdm}">ADMIN</button>
+                        <button class="btn-action-small admin-user-action" onclick="adminEditNombre('${user}')" title="Editar nombre real">✎</button>
+                        <button class="btn-action-small admin-user-action delete-user" onclick="adminRemoveUser('${user}')" title="Eliminar usuario definitivamente">✖</button>
+                    </div>
+                </div>`;
+            }
+            listEl.innerHTML = html || '<div class="admin-empty">SIN COINCIDENCIAS PARA LA BÚSQUEDA</div>';
+            updateAdminUI();
+        }
+        window.refreshAdminList = refreshAdminList;
+
+        window.adminAddUser = function() {
+    if (!isAdminUser()) return;
+    const name = normalizeEmail(document.getElementById('admin-name').value);
+    if (!name) return alert("INGRESE EL CORREO DEL USUARIO (EJ: juan.perez@latam.cl).");
+    if (!name.includes('@')) return alert("INGRESE EL CORREO COMPLETO, INCLUYENDO EL DOMINIO (EJ: juan.perez@latam.cl).");
+    if (isSuperAdmin(name)) return showToast('⚠️ ESE USUARIO YA ES SUPER ADMIN');
+    const asUser = document.getElementById('admin-is-user').checked;
+    const asTech = document.getElementById('admin-is-tech').checked;
+    const asTl = document.getElementById('admin-is-tl').checked;
+    const asAdmin = document.getElementById('admin-is-admin').checked;
+    
+    if (!asUser && !asTech && !asTl && !asAdmin) return alert("SELECCIONE AL MENOS UN ROL.");
+    const rec = userRec(name);
+    rec.email = name;
+    const nombreReal = document.getElementById('admin-realname').value.trim();
+    if (nombreReal && !rec.nombre) rec.nombre = nombreReal;
+    if (asUser || asTech || asTl || asAdmin) rec.usuario = true;
+    if (asTech) rec.tech = true;
+    if (asTl) rec.tl = true;
+    if (asAdmin) rec.admin = true;
+    syncRoleArrays();
+    document.getElementById('admin-name').value = '';
+    document.getElementById('admin-realname').value = '';
+    refreshAdminList();
+    showToast("✅ USUARIO AGREGADO: " + name.toUpperCase());
+    saveUsuarios();
+}
+
+window.adminToggleTech = function(user) {
+            if (!isAdminUser()) return;
+            if (isSuperAdmin(user)) return showToast('⚠️ NO SE PUEDE MODIFICAR AL SUPER ADMIN');
+            const rec = userRec(user);
+            const nuevoEstado = !rec.tech;
+            const teniaSuperior = !!(rec.tl || rec.admin);
+            if (nuevoEstado) activarRol(rec, 'tech'); else quitarRol(rec, 'tech');
+            syncRoleArrays();
+            refreshAdminList();
+            showToast(nuevoEstado ? `✅ ROL TÉCNICO ASIGNADO A ${user.toUpperCase()}`
+                : teniaSuperior ? `⚠️ SE QUITARON TÉCNICO, TL Y ADMIN A ${user.toUpperCase()}`
+                : `⚠️ ROL TÉCNICO QUITADO A ${user.toUpperCase()}: QUEDA SOLO LECTURA`);
+            saveUsuarios();
+        }
+
+            // Jerarquia de roles: usuario < tecnico < TL < admin.
+    // Activar un rol activa todos los inferiores; quitarlo arrastra a los superiores que lo necesitan.
+    const ROLES_ORDEN = ['usuario', 'tech', 'tl', 'admin'];
+    function activarRol(rec, rol) {
+        for (const r of ROLES_ORDEN) { if (r === rol) break; rec[r] = true; }
+        rec[rol] = true;
+    }
+    function quitarRol(rec, rol) {
+        const i = ROLES_ORDEN.indexOf(rol);
+        for (let k = i; k < ROLES_ORDEN.length; k++) rec[ROLES_ORDEN[k]] = false;
+    }
+window.adminToggleUsuario = function(user) {
+            if (!isAdminUser()) return;
+            if (isSuperAdmin(user)) return showToast('⚠️ NO SE PUEDE MODIFICAR AL SUPER ADMIN');
+            const rec = userRec(user);
+            const nuevoEstado = !rec.usuario;
+            if (nuevoEstado) activarRol(rec, 'usuario'); else quitarRol(rec, 'usuario');
+            syncRoleArrays();
+            refreshAdminList();
+            showToast(nuevoEstado ? `✅ ACCESO ACTIVADO: ${user.toUpperCase()}` : `⚠️ ${user.toUpperCase()} SE QUEDÓ SIN NINGÚN ACCESO`);
+            saveUsuarios();
+        }
+
+        window.adminEditNombre = function(user) {
+            if (!isAdminUser()) return;
+            showPromptModal(`NOMBRE REAL DE ${user.toUpperCase()}:`, userRec(user).nombre || '', (valor) => {
+                usuariosDB[user].nombre = valor;
+                refreshAdminList();
+                saveUsuarios();
+                if (valor) showToast(`✅ NOMBRE GUARDADO: ${valor.toUpperCase()}`);
+            }, 'GUARDAR NOMBRE', 'EJ: JUAN PEREZ');
+        }
+
+        let promptCallback = null;
+        window.showPromptModal = function(title, defaultVal, callback, saveLabel, placeholder) {
+            document.getElementById('prompt-title').innerText = title;
+            const input = document.getElementById('prompt-input');
+            input.value = defaultVal || '';
+            input.placeholder = placeholder || '';
+            document.getElementById('prompt-save-btn').innerText = saveLabel || 'GUARDAR';
+            promptCallback = callback;
+            document.getElementById('prompt-modal').style.display = 'block';
+            setTimeout(() => input.focus(), 50);
+        }
+        window.closePromptModal = function() {
+            document.getElementById('prompt-modal').style.display = 'none';
+            promptCallback = null;
+        }
+        document.getElementById('prompt-save-btn').onclick = function() {
+            const val = document.getElementById('prompt-input').value.trim().toUpperCase();
+            const cb = promptCallback;
+            closePromptModal();
+            if (cb) setTimeout(() => cb(val), 0);
+        };
+
+        window.adminToggleTl = function(user) {
+            if (!isAdminUser()) return;
+            if (isSuperAdmin(user)) return showToast('⚠️ NO SE PUEDE MODIFICAR AL SUPER ADMIN');
+            const rec = userRec(user);
+            const nuevoEstado = !rec.tl;
+            const teniaAdmin = !!rec.admin;
+            if (nuevoEstado) activarRol(rec, 'tl'); else quitarRol(rec, 'tl');
+            syncRoleArrays();
+            refreshAdminList();
+            showToast(nuevoEstado ? `✅ TL OTORGADO A ${user.toUpperCase()}`
+                : teniaAdmin ? `⚠️ SE QUITARON TL Y ADMIN A ${user.toUpperCase()}`
+                : `⚠️ TL QUITADO A ${user.toUpperCase()}`);
+            saveUsuarios();
+        }
+
+        window.adminToggleAdmin = function(user) {
+            if (!isAdminUser()) return;
+            if (isSuperAdmin(user)) return showToast('⚠️ NO SE PUEDE MODIFICAR AL SUPER ADMIN');
+            const rec = userRec(user);
+            const nuevoEstado = !rec.admin;
+            if (nuevoEstado) activarRol(rec, 'admin'); else quitarRol(rec, 'admin');
+            syncRoleArrays();
+            refreshAdminList();
+            showToast(nuevoEstado ? `✅ ADMIN OTORGADO A ${user.toUpperCase()}` : `⚠️ ADMIN QUITADO A ${user.toUpperCase()}`);
+            saveUsuarios();
+        }
+
+        window.adminRemoveUser = function(user) {
+            if (!isAdminUser()) return;
+            if (isSuperAdmin(user)) return showToast('⚠️ EL SUPER ADMIN NO PUEDE SER ELIMINADO');
+            showConfirm(`¿ELIMINAR A ${user.toUpperCase()} DEFINITIVAMENTE?`, () => {
+                delete usuariosDB[user];
+                syncRoleArrays();
+                refreshAdminList();
+                showToast("✖ USUARIO ELIMINADO");
+                saveUsuarios();
+            });
+        }
+
+        function isEffectivityStrictlyValid(appCode) {
+            if (!appCode || appCode.trim() === '') return false;
+            const pEff = parseInt(appCode, 10);
+            if (isNaN(pEff)) return false;
+
+            let isRecognized = false;
+
+            const checkRule = (rule) => {
+                if (!rule || rule.trim() === '' || rule.toUpperCase() === 'ALL') return;
+                const ranges = rule.split(',');
+                for (let i = 0; i < ranges.length; i++) {
+                    const bounds = ranges[i].trim().split('-');
+                    if (bounds.length === 1) {
+                        const val = parseInt(bounds[0], 10);
+                        if (!isNaN(val) && val === pEff) isRecognized = true;
+                    } else if (bounds.length === 2) {
+                        const min = parseInt(bounds[0], 10);
+                        const max = parseInt(bounds[1], 10);
+                        if (!isNaN(min) && !isNaN(max) && pEff >= min && pEff <= max) isRecognized = true;
+                    }
+                }
+            };
+
+            Object.values(efectividadesDB).forEach(catalog => {
+                checkRule(catalog.catalogCode);
+                if (catalog.parts) {
+                    Object.values(catalog.parts).forEach(p => {
+                        checkRule(p.app);
+                    });
+                }
+            });
+
+            return isRecognized;
+        }
+
+        function isAppMatch(planeEffStr, partAppStr, catalogCodeStr) {
+            if (!planeEffStr || planeEffStr.trim() === '') return false;
+            const pEff = parseInt(planeEffStr, 10);
+            if (isNaN(pEff)) return false;
+
+            const matchesRule = (rule) => {
+                if (!rule || rule.trim() === '' || rule.toUpperCase() === 'ALL') return null; 
+                let explicitlyMatches = false;
+                let hasValidRanges = false;
+                
+                const ranges = rule.split(',');
+                for (let i = 0; i < ranges.length; i++) {
+                    const bounds = ranges[i].trim().split('-');
+                    if (bounds.length === 1) {
+                        const val = parseInt(bounds[0], 10);
+                        if (!isNaN(val)) {
+                            hasValidRanges = true;
+                            if (val === pEff) explicitlyMatches = true;
+                        }
+                    } else if (bounds.length === 2) {
+                        const min = parseInt(bounds[0], 10);
+                        const max = parseInt(bounds[1], 10);
+                        if (!isNaN(min) && !isNaN(max)) {
+                            hasValidRanges = true;
+                            if (pEff >= min && pEff <= max) explicitlyMatches = true;
+                        }
+                    }
+                }
+                return hasValidRanges ? explicitlyMatches : null;
+            };
+
+            const partMatch = matchesRule(partAppStr);
+            if (partMatch === true) return true;
+            if (partMatch === false) return false;
+
+            const catMatch = matchesRule(catalogCodeStr);
+            if (catMatch === true) return true;
+            if (catMatch === false) return false;
+
+            return true; 
+        }
+
+        function getMergedPlaneParts(reg) {
+            const plane = flotaDB[reg];
+            if (!plane) return [];
+            
+            if (!plane.appCode && plane.parts && Array.isArray(plane.parts)) {
+                return plane.parts.map(p => ({ id: generateId(), ...p, status: 'legacy', isBase: false }));
+            }
+
+            const planeAppCode = plane.appCode || ''; 
+            let baseParts = {};
+            const exceptions = plane.exceptions || {};
+            let merged = [];
+
+            if (planeAppCode !== '') {
+                if (!isEffectivityStrictlyValid(planeAppCode)) {
+                    Object.keys(exceptions).forEach(partId => {
+                        if (!exceptions[partId]._deleted) {
+                            merged.push({ id: partId, ...exceptions[partId], status: 'custom', isBase: false });
+                        }
+                    });
+                    merged._invalidEffectivity = true; 
+                    return merged;
+                }
+            }
+            
+            Object.values(efectividadesDB).forEach(catalog => {
+                if(catalog.parts) {
+                    Object.keys(catalog.parts).forEach(partId => {
+                        const p = catalog.parts[partId];
+                        if (isAppMatch(planeAppCode, p.app, catalog.catalogCode)) {
+                            baseParts[partId] = { ...p, _catalogSource: catalog.catalogCode };
+                        }
+                    });
+                }
+            });
+
+            Object.keys(baseParts).forEach(partId => {
+                const basePart = baseParts[partId];
+                if (exceptions[partId]) {
+                    if(!exceptions[partId]._deleted) {
+                        merged.push({ id: partId, ...basePart, ...exceptions[partId], originalPn: basePart.pn, status: 'exception', isBase: true });
+                    }
+                } else {
+                    merged.push({ id: partId, ...basePart, originalPn: basePart.pn, status: 'standard', isBase: true });
+                }
+            });
+            
+            Object.keys(exceptions).forEach(partId => {
+                if (!baseParts[partId] && !exceptions[partId]._deleted) {
+                    merged.push({ id: partId, ...exceptions[partId], status: 'custom', isBase: false });
+                }
+            });
+            
+            return merged;
+        }
+
+        function updateSelector() {
+            const selectModalEff = document.getElementById('modal-eff-select');
+            const planeDatalist = document.getElementById('planes-datalist');
+            const currentModalEff = selectModalEff.value;
+            
+            planeDatalist.innerHTML = '';
+            selectModalEff.innerHTML = '<option value="">-- ELIJA UN CATÁLOGO --</option>';
+            
+            Object.keys(flotaDB).sort().forEach(reg => {
+                const option = document.createElement('option');
+                option.value = reg;
+                planeDatalist.appendChild(option);
+            });
+
+            Object.keys(efectividadesDB).sort().forEach(code => {
+                selectModalEff.add(new Option(`⚙️ ${code}`, code));
+            });
+            if (currentModalEff && efectividadesDB[currentModalEff]) selectModalEff.value = currentModalEff;
+
+            const descSet = new Set(); const pnSet = new Set(); const ataSet = new Set(); const ipcSet = new Set();
+            const scanPart = p => { if(p.desc) descSet.add(p.desc); if(p.pn) pnSet.add(p.pn); if(p.ata) ataSet.add(p.ata); if(p.ipc) ipcSet.add(p.ipc); };
+            
+            Object.values(efectividadesDB).forEach(e => Object.values(e.parts || {}).forEach(scanPart));
+            Object.values(flotaDB).forEach(a => {
+                let parts = getMergedPlaneParts(a.reg);
+                if (!parts._invalidEffectivity) parts.forEach(scanPart);
+            });
+
+            const fillDatalist = (id, set) => {
+                const dl = document.getElementById(id); dl.innerHTML = '';
+                Array.from(set).sort().forEach(v => { const o = document.createElement('option'); o.value = v; dl.appendChild(o); });
+            };
+            fillDatalist('descripciones-list', descSet); fillDatalist('pn-list', pnSet); fillDatalist('ata-list', ataSet); fillDatalist('ipc-list', ipcSet);
+        }
+
+        window.onPlaneInput = function(input) {
+            // Formateo automático matrícula: ccbga -> CC-BGA (todo lo de matrícula con guion tras 2 letras)
+            formatMatricula(input);
+            loadSelectedPlane();
+        };
+
+        window.loadSelectedPlane = function() {
+            const inputEl = document.getElementById('plane-select');
+            let reg = inputEl.value.trim().toUpperCase();
+            
+            if (!reg || !flotaDB[reg]) {
+                if (currentLoadedReg) {
+                    resetView();
+                }
+                return;
+            }
+            
+            currentLoadedReg = reg; currentZoneFilter = null; 
+            document.querySelectorAll('.svg-group').forEach(g => g.classList.remove('active-zone'));
+            localStorage.setItem('saved_plane_reg', reg);
+            document.getElementById('welcome-area').style.display = 'none';
+            document.getElementById('main-plane-area').style.display = 'block';
+            
+            renderPlaneData();
+        }
+
+        function renderPlaneData() {
+            const plane = flotaDB[currentLoadedReg];
+            const badgeEl = document.getElementById('plane-eff-badge');
+            const alertZoneEl = document.getElementById('zone-filter-alert');
+            
+            const editBtn = document.getElementById('btn-edit-plane');
+            const delBtn = document.getElementById('btn-delete-plane');
+            if (editBtn) editBtn.style.display = 'inline-flex';
+            if (delBtn) delBtn.style.display = 'inline-flex';
+
+            if(plane && plane.appCode) {
+                badgeEl.innerText = `APPLICABILITY CODE: ${plane.appCode}`;
+                badgeEl.style.display = 'inline-flex';
+            } else {
+                badgeEl.style.display = 'none';
+            }
+            
+            const container = document.getElementById('pn-grid-container');
+            container.innerHTML = '';
+
+            let parts = getMergedPlaneParts(currentLoadedReg);
+            let warningHtml = '';
+            const verifications = plane.verifications || {};
+            
+            if (parts._invalidEffectivity) {
+                warningHtml = `
+                    <div style="grid-column: 1/-1;" class="no-results">
+                        <span style="color:var(--danger); font-size:1.2em; font-weight:800;">⚠️ EFECTIVIDAD "${plane.appCode}" NO ES RECONOCIDA EN EL CATÁLOGO</span><br><br>
+                        Esta efectividad no está explícitamente autorizada. No se ha cargado ninguna pieza.
+                    </div>
+                `;
+            }
+
+            if (currentZoneFilter && Array.isArray(parts)) {
+                alertZoneEl.innerHTML = `<div style="background: var(--light-gray); padding: 8px 12px; border-radius: 4px; font-weight: bold; color: var(--accent); border: 1px solid var(--border); margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size: 10px;">
+                    <span>🔍 FILTRO DE ZONA ACTIVO: ${currentZoneFilter}</span>
+                    <button onclick="toggleZoneFilter('${currentZoneFilter}')" style="height: var(--button-height); padding: 0 8px; font-size: 9px; background: var(--surface); color: var(--primary); border: 1px solid var(--primary);">✖ QUITAR FILTRO</button>
+                </div>`;
+                parts = parts.filter(p => (p.pos || "").toUpperCase().includes(currentZoneFilter) || (p.desc || "").toUpperCase().includes(currentZoneFilter));
+            } else {
+                alertZoneEl.innerHTML = '';
+            }
+
+            if (Array.isArray(parts) && !parts._invalidEffectivity) {
+                parts.sort((a, b) => (a.desc || "").localeCompare(b.desc || ""));
+            }
+
+            if (parts.length === 0) {
+                container.innerHTML = warningHtml || `<div style="grid-column: 1/-1;" class="no-results">No se encontraron componentes aplicables a esta configuración/efectividad.</div>`;
+                return;
+            }
+
+            if (warningHtml) container.innerHTML += warningHtml;
+
+            parts.forEach(part => {
+                let badge = '';
+                if (part.status === 'exception') badge = `<span class="badge badge-exception">⚠️ MODIFICADO</span>`;
+                else if (part.status === 'custom') badge = `<span class="badge badge-custom">➕ CUSTOM</span>`;
+
+                const cardClass = part.status === 'exception' ? 'card-exception' : (part.status === 'custom' ? 'card-custom' : '');
+                
+                let pnDisplayHtml = '';
+                if (part.originalPn && part.pn && part.originalPn !== part.pn) {
+                    pnDisplayHtml = `
+                        <div class="pn-main-row" style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed var(--border);">
+                            <div>
+                                <span style="font-size: 8px; color: var(--comment); display: block; font-weight: bold;">P/N EFECTIVIDAD:</span>
+                                <div class="pn-value" style="font-size: 12px; color: var(--comment); text-decoration: line-through;">${escapeHtml(part.originalPn)}</div>
+                            </div>
+                            <button class="btn-copy" onclick="copyPN('${escapeAttr(part.originalPn)}')" style="height: var(--button-height); font-size: 8px;">📋 COPIAR</button>
+                        </div>
+                        <div class="pn-main-row">
+                            <div>
+                                <span style="font-size: 9px; color: var(--accent); font-weight: bold; display: block;">P/N FÍSICO:</span>
+                                <div class="pn-value">${escapeHtml(part.pn)}</div>
+                            </div>
+                            <button class="btn-copy" onclick="copyPN('${escapeAttr(part.pn)}')">📋 COPIAR</button>
+                        </div>
+                    `;
+                } else {
+                    pnDisplayHtml = `
+                        <div class="pn-main-row">
+                            <div class="pn-value">${escapeHtml(part.pn)}</div>
+                            <button class="btn-copy" onclick="copyPN('${escapeAttr(part.pn)}')">📋 COPIAR</button>
+                        </div>
+                    `;
+                }
+                
+                let verifiedHtml = '';
+                if (verifications[part.id]) {
+                    verifiedHtml = `<div style="width: 100%; text-align: right; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); color: var(--success); font-weight: 900; font-size: 9px;">✅ REVISADO: ${verifications[part.id]}</div>`;
+                }
+
+                let ipcLinkHtml = '';
+                if (part.ipc) {
+                    const urlIpc = 'en' + part.ipc.replace(/-/g, '').toLowerCase();
+                    ipcLinkHtml = `<div><span style="color:var(--comment); font-weight:normal;">IPC:</span> <a href="https://toolbox.appslatam.com/a320/ToolboxRemote.html#/AIPC/da/AIPC/bid/31774841/data/${encodeURIComponent(urlIpc)}" target="_blank" style="color: var(--leader-color); text-decoration: underline; font-weight: 800;">${escapeHtml(part.ipc)}</a></div>`;
+                }
+
+                container.innerHTML += `
+                    <div class="pn-card ${cardClass}">
+                        <div class="pn-desc">
+                            <span>${escapeHtml(part.desc)}</span> 
+                            <div style="display: flex; gap: 5px; align-items: center;">
+                                ${badge}
+                                <button class="btn-action-small btn-verify-part" onclick="verifyPart('${part.id}')">✔️ CONFIRMAR</button>
+                                <button class="btn-action-small leader-only" style="height: var(--button-height); font-size: 9px; padding: 0 6px;" onclick="editSinglePart('${part.id}')">✏️ EDITAR</button>
+                            </div>
+                        </div>
+                        <div class="pn-value-container">
+                            ${pnDisplayHtml}
+                            <div class="pn-extra-info">
+                                <div><span style="color:var(--comment); font-weight:normal;">UBICACIÓN:</span> ${escapeHtml(part.pos || '-')}</div>
+                                <div><span style="color:var(--comment); font-weight:normal;">CMM:</span> ${escapeHtml(part.ata || '-')}</div>
+                                ${ipcLinkHtml}
+                                ${verifiedHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function resetView() {
+            currentLoadedReg = null; currentZoneFilter = null;
+            document.querySelectorAll('.svg-group').forEach(g => g.classList.remove('active-zone'));
+            document.getElementById('main-plane-area').style.display = 'none';
+            document.getElementById('welcome-area').style.display = 'block';
+            
+            document.getElementById('btn-edit-plane').style.display = 'none';
+            document.getElementById('btn-delete-plane').style.display = 'none';
+            document.getElementById('plane-eff-badge').style.display = 'none';
+            document.getElementById('zone-filter-alert').innerHTML = '';
+            
+            localStorage.removeItem('saved_plane_reg');
+        }
+
+        window.editSinglePart = function(partId) {
+            if (!isTeamLeader || !currentLoadedReg) return;
+            const parts = getMergedPlaneParts(currentLoadedReg);
+            const part = parts.find(p => p.id === partId);
+            if (!part) return;
+
+            document.getElementById('sp-modal-title').innerText = '✏️ EDITAR COMPONENTE';
+            document.getElementById('sp-id').value = partId;
+            document.getElementById('sp-desc').value = part.desc || '';
+            document.getElementById('sp-pn').value = part.pn || '';
+            
+            const posInput = document.getElementById('sp-pos');
+            posInput.value = part.pos || '';
+            const zones = (part.pos || '').split(',').map(z => z.trim());
+            const optionsDiv = document.getElementById('sp-pos-options');
+            
+            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = zones.includes(cb.value);
+            });
+            
+            const header = document.getElementById('sp-pos-header');
+            const headerText = zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS';
+            header.innerHTML = headerText + '<span style="font-size:8px; float:right;"> ▼</span>';
+
+            document.getElementById('sp-ata').value = part.ata || '';
+            document.getElementById('sp-ipc').value = part.ipc || '';
+            
+            const btnRevert = document.getElementById('btn-sp-revert');
+            if (part.status === 'exception') {
+                btnRevert.style.display = 'inline-flex';
+                btnRevert.innerText = '↺ REVERTIR AL ESTÁNDAR';
+            } else if (part.status === 'custom') {
+                btnRevert.style.display = 'inline-flex';
+                btnRevert.innerText = '🗑️ ELIMINAR PIEZA';
+            } else {
+                btnRevert.style.display = 'none';
+            }
+
+            document.getElementById('single-part-modal').style.display = 'block';
+        }
+
+        window.openAddCustomPartModal = function() {
+            if (!isTeamLeader || !currentLoadedReg) return;
+            document.getElementById('sp-modal-title').innerText = '➕ AÑADIR COMPONENTE';
+            document.getElementById('sp-id').value = generateId(); 
+            document.getElementById('sp-desc').value = '';
+            document.getElementById('sp-pn').value = '';
+            document.getElementById('sp-pos').value = '';
+            
+            const optionsDiv = document.getElementById('sp-pos-options');
+            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            const header = document.getElementById('sp-pos-header');
+            header.innerHTML = 'ZONAS<span style="font-size:8px; float:right;"> ▼</span>';
+
+            document.getElementById('sp-ata').value = '';
+            document.getElementById('sp-ipc').value = '';
+
+            document.getElementById('btn-sp-revert').style.display = 'none'; 
+            document.getElementById('single-part-modal').style.display = 'block';
+        }
+
+        window.saveSinglePart = function() {
+            if (!isTeamLeader || !currentLoadedReg) return;
+            const partId = document.getElementById('sp-id').value;
+            const desc = document.getElementById('sp-desc').value.trim().toUpperCase();
+            const pn = document.getElementById('sp-pn').value.trim().toUpperCase();
+            const pos = document.getElementById('sp-pos').value.trim().toUpperCase();
+            const ata = document.getElementById('sp-ata').value.trim().toUpperCase();
+            const ipc = document.getElementById('sp-ipc').value.trim().toUpperCase();
+
+            if (!desc || !pn) return alert("Descripción y P/N Actual son obligatorios.");
+
+            const plane = flotaDB[currentLoadedReg];
+            let exceptions = plane.exceptions || {};
+            
+            exceptions[partId] = {
+                ...(exceptions[partId] || {}),
+                desc, pn, pos, ata, ipc
+            };
+
+            dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions`), exceptions).then(() => {
+                const userName = displayNameFor(sessionUser()) || 'USUARIO';
+                const timestamp = `${get24hTimestamp()} | 👤 ${userName}`;
+                dbSet(ref(db, `pns_aviones/${currentLoadedReg}/verifications/${partId}`), timestamp).then(() => {
+                    closeModal('single-part-modal');
+                    showToast("✅ Componente Guardado y Verificado");
+                });
+            });
+        }
+
+        window.revertSinglePart = function() {
+            if (!isLeaderOrAdmin() || !currentLoadedReg) return;
+            const partId = document.getElementById('sp-id').value;
+            if(confirm("¿Seguro que desea eliminar esta excepción/pieza custom? Si aplica, se revertirá al estándar del catálogo.")) {
+                dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions/${partId}`), null).then(() => {
+                    closeModal('single-part-modal');
+                    showToast("✅ Pieza revertida / eliminada");
+                });
+            }
+        }
+
+        window.openEffManager = function() {
+            if (!isLeaderOrAdmin()) return;
+            document.getElementById('eff-components-area').style.display = 'none';
+            document.getElementById('eff-modal').style.display = 'block';
+        }
+
+        window.createNewCatalog = function() {
+            const name = prompt("Ingrese nombre para el nuevo Catálogo:");
+            if(!name) return;
+            const code = name.trim().toUpperCase();
+            if(efectividadesDB[code]) return alert("Ese catálogo ya existe.");
+            
+            dbSet(ref(db, `efectividades/${code}`), { catalogCode: code, parts: {} }).then(() => {
+                showToast("Catálogo Creado");
+                document.getElementById('modal-eff-select').value = code;
+                loadEffIntoModal(code);
+            });
+        }
+
+        window.renameCatalog = function() {
+            if(!currentEditingCatalog) return alert("Seleccione un catálogo primero.");
+            const name = prompt(`Modificar identificador para el catálogo ${currentEditingCatalog}:`, currentEditingCatalog);
+            if(!name) return;
+            const newCode = name.trim().toUpperCase();
+            if(newCode === currentEditingCatalog) return;
+            if(efectividadesDB[newCode]) return alert("Ese código de catálogo ya existe.");
+
+            if(confirm(`¿Confirmar cambio de nombre de "${currentEditingCatalog}" a "${newCode}"?`)) {
+                const oldRef = ref(db, `efectividades/${currentEditingCatalog}`);
+                const newRef = ref(db, `efectividades/${newCode}`);
+                const data = efectividadesDB[currentEditingCatalog];
+                data.catalogCode = newCode;
+                
+                set(newRef, data).then(() => {
+                    set(oldRef, null).then(() => {
+                        showToast("Catálogo Renombrado");
+                        currentEditingCatalog = newCode;
+                        updateSelector();
+                        document.getElementById('modal-eff-select').value = newCode;
+                        loadEffIntoModal(newCode);
+                    });
+                });
+            }
+        }
+
+        window.loadEffIntoModal = function(overrideCode = null) {
+            const code = overrideCode || document.getElementById('modal-eff-select').value;
+            if(!code) {
+                document.getElementById('eff-components-area').style.display = 'none';
+                return;
+            }
+            currentEditingCatalog = code;
+            
+            const container = document.getElementById('eff-components-container');
+            container.innerHTML = '';
+            
+            const eff = efectividadesDB[code];
+            if (eff && eff.parts) {
+                const sortedParts = Object.keys(eff.parts)
+                    .map(id => ({ id, ...eff.parts[id] }))
+                    .sort((a, b) => (a.desc || "").localeCompare(b.desc || ""));
+                    
+                sortedParts.forEach(p => {
+                    addComponentRow('eff-components-container', p.id, true, 'standard', p.desc, p.pn, p.pos, p.ata, p.ipc, p.app, code);
+                });
+            }
+            document.getElementById('eff-components-area').style.display = 'block';
+            document.getElementById('display-catalog-name').innerText = "CATÁLOGO ACTIVO: " + code;
+        }
+
+        window.saveEfectividadData = function() {
+            if(!currentEditingCatalog) return;
+            const rows = document.getElementById('eff-components-container').querySelectorAll('.component-row-wrapper');
+            let partsData = {};
+            
+            rows.forEach(row => {
+                const id = row.dataset.id || generateId();
+                const desc = row.querySelector('.part-desc').value.trim().toUpperCase();
+                const pn = row.querySelector('.part-pn').value.trim().toUpperCase();
+                if (desc && pn) {
+                    partsData[id] = {
+                        desc, pn, 
+                        pos: row.querySelector('.part-pos').value.trim().toUpperCase(),
+                        ata: row.querySelector('.part-ata').value.trim().toUpperCase(),
+                        ipc: row.querySelector('.part-ipc').value.trim().toUpperCase(),
+                        app: row.querySelector('.part-app').value.trim().toUpperCase()
+                    };
+                }
+            });
+            
+            dbSet(ref(db, `efectividades/${currentEditingCatalog}`), { catalogCode: currentEditingCatalog, parts: partsData }).then(() => {
+                showToast("Catálogo Guardado");
+                closeModal('eff-modal');
+                if(currentLoadedReg) loadSelectedPlane(); 
+            });
+        }
+
+        window.deleteEfectividad = function() {
+            if(!currentEditingCatalog) return;
+            if(confirm(`⚠️ ¿Eliminar el catálogo ${currentEditingCatalog}?`)) {
+                dbSet(ref(db, `efectividades/${currentEditingCatalog}`), null).then(() => {
+                    showToast("Catálogo Eliminado"); closeModal('eff-modal');
+                    currentEditingCatalog = null;
+                });
+            }
+        }
+
+        window.handleEffChange = function() {
+            const input = document.getElementById('modal-plane-appcode');
+            
+            let val = input.value.replace(/[^0-9]/g, '');
+            if(val !== '') val = val.padStart(3, '0');
+            input.value = val;
+            
+            const appCode = val;
+            const container = document.getElementById('plane-components-container');
+            
+            let currentCustoms = [];
+            container.querySelectorAll('.component-row-wrapper').forEach(row => {
+                if (row.dataset.status === 'custom') {
+                    const desc = row.querySelector('.part-desc').value.trim().toUpperCase();
+                    const pn = row.querySelector('.part-pn').value.trim().toUpperCase();
+                    const pos = row.querySelector('.part-pos').value.trim().toUpperCase();
+                    const ata = row.querySelector('.part-ata').value.trim().toUpperCase();
+                    const ipc = row.querySelector('.part-ipc').value.trim().toUpperCase();
+                    if (desc || pn) currentCustoms.push({ id: row.dataset.id, desc, pn, pos, ata, ipc });
+                }
+            });
+
+            container.innerHTML = '';
+            let count = 0;
+
+            if (appCode !== '') {
+                if (!isEffectivityStrictlyValid(appCode)) {
+                    alert(`⚠️ AVISO: La efectividad "${appCode}" NO es reconocida en el catálogo de efectividades.\nEl avión quedará en blanco y no heredará P/N del catálogo.`);
+                    showToast("Efectividad Bloqueada");
+                } else {
+                    Object.values(efectividadesDB).forEach(catalog => {
+                        const parts = catalog.parts || {};
+                        const sortedBaseParts = Object.keys(parts)
+                            .map(id => ({ id, ...parts[id] }))
+                            .sort((a, b) => (a.desc || "").localeCompare(b.desc || ""));
+
+                        sortedBaseParts.forEach(p => {
+                            if(isAppMatch(appCode, p.app, catalog.catalogCode)) {
+                                addComponentRow('plane-components-container', p.id, true, 'standard', p.desc, p.pn, p.pos, p.ata, p.ipc, p.app, catalog.catalogCode);
+                                count++;
+                            }
+                        });
+                    });
+                }
+            }
+
+            currentCustoms.forEach(c => {
+                 addComponentRow('plane-components-container', c.id, false, 'custom', c.desc, c.pn, c.pos, c.ata, c.ipc, '', null);
+            });
+
+            if (count > 0) {
+                showToast(`Herencia aplicada: ${count} piezas vinculadas.`);
+            }
+        }
+
+        window.addComponentRow = function(containerId, id, isBase, status, desc, pn, pos, ata, ipc, app, catalogSource) {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            if(!id) id = generateId();
+            
+            row.className = `component-row-wrapper ${status === 'exception' ? 'row-exception' : ''}`;
+            row.dataset.id = id; row.dataset.isBase = isBase; row.dataset.status = status;
+            if(catalogSource) row.dataset.catalogSource = catalogSource;
+            
+            const zones = (pos || '').split(',').map(z => z.trim());
+            const isChecked = (val) => zones.includes(val) ? 'checked' : '';
+            const headerText = zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS';
+
+            let overrideHtml = '';
+            const isPlaneModal = containerId === 'plane-components-container';
+            
+            let appInputHtml = isPlaneModal ? '' : `<input type="text" class="part-app col-app" placeholder="APP" value="${escapeAttr(app)}">`;
+
+            if (isPlaneModal && status === 'exception') {
+                overrideHtml = `
+                    <div class="override-controls">
+                        <span style="font-size:9px; color:var(--warning); margin-right:auto; font-weight:bold;">⚠️ EXCEPCIÓN LOCAL</span>
+                        <button class="btn-action-small" onclick="revertRowToStandard(this)">↺ REVERTIR AL ESTÁNDAR</button>
+                        <button class="btn-action-small" style="background: var(--primary); color:var(--surface); border-color: var(--primary);" onclick="forceUpdateStandard(this)">⬆️ FORZAR A FLOTA</button>
+                    </div>`;
+            } else if (isPlaneModal && status === 'custom') {
+                 overrideHtml = `<div class="override-controls"><span style="font-size:9px; color:var(--indigo); font-weight:bold;">➕ PIEZA CUSTOM (No existe en catálogo)</span></div>`;
+            }
+
+            row.innerHTML = `
+                <div class="component-row-main">
+                    <input type="text" class="part-desc col-desc" placeholder="DESC" list="descripciones-list" value="${escapeAttr(desc)}">
+                    <input type="text" class="part-pn col-pn" placeholder="P/N" list="pn-list" value="${escapeAttr(pn)}">
+                    
+                    <div class="custom-multiselect col-pos">
+                        <div class="multiselect-header" onclick="toggleMulti(this)">${escapeHtml(headerText)}<span style="font-size:8px; float:right;"> ▼</span></div>
+                        <div class="multiselect-options">
+                            <label><input type="checkbox" value="FWD" onchange="updateMultiValue(this)" ${isChecked('FWD')}> FWD</label>
+                            <label><input type="checkbox" value="AFT" onchange="updateMultiValue(this)" ${isChecked('AFT')}> AFT</label>
+                            <label><input type="checkbox" value="MCD CENTRAL" onchange="updateMultiValue(this)" ${isChecked('MCD CENTRAL')}> MCD CENTRAL</label>
+                            <label><input type="checkbox" value="MCD LH" onchange="updateMultiValue(this)" ${isChecked('MCD LH')}> MCD LH</label>
+                            <label><input type="checkbox" value="MCD RH" onchange="updateMultiValue(this)" ${isChecked('MCD RH')}> MCD RH</label>
+                            <label><input type="checkbox" value="CAPTAIN SEAT" onchange="updateMultiValue(this)" ${isChecked('CAPTAIN SEAT')}> CAPTAIN SEAT</label>
+                            <label><input type="checkbox" value="F/O SEAT" onchange="updateMultiValue(this)" ${isChecked('F/O SEAT')}> F/O SEAT</label>
+                            <label><input type="checkbox" value="3RD OCCUPANT SEAT" onchange="updateMultiValue(this)" ${isChecked('3RD OCCUPANT SEAT')}> 3RD OCCUPANT SEAT</label>
+                            <label><input type="checkbox" value="4TH OCCUPANT SEAT" onchange="updateMultiValue(this)" ${isChecked('4TH OCCUPANT SEAT')}> 4TH OCCUPANT SEAT</label>
+                        </div>
+                        <input type="hidden" class="part-pos" value="${escapeAttr(pos)}">
+                    </div>
+                    
+                    <input type="text" class="part-ata col-ata" placeholder="CMM" list="ata-list" value="${escapeAttr(ata)}">
+                    <input type="text" class="part-ipc col-ipc" placeholder="IPC" list="ipc-list" value="${escapeAttr(ipc)}">
+                    ${appInputHtml}
+                    
+                    <button class="btn-remove-row" onclick="this.parentElement.parentElement.remove()" title="Eliminar">✖</button>
+                </div>
+                ${overrideHtml}
+            `;
+            container.appendChild(row);
+            
+            if (isPlaneModal && isBase && status === 'standard') {
+                const inputs = row.querySelectorAll('input:not(.part-app)');
+                inputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        row.classList.add('row-exception');
+                        row.dataset.status = 'exception';
+                    }, {once: true});
+                });
+            }
+        }
+
+        window.revertRowToStandard = function(btn) {
+            const row = btn.closest('.component-row-wrapper');
+            const catalogCode = row.dataset.catalogSource;
+            if(!catalogCode || !efectividadesDB[catalogCode]) return;
+
+            const basePart = efectividadesDB[catalogCode].parts[row.dataset.id];
+            if (basePart) {
+                row.querySelector('.part-desc').value = basePart.desc || '';
+                row.querySelector('.part-pn').value = basePart.pn || '';
+                row.querySelector('.part-pos').value = basePart.pos || '';
+                
+                const posStr = basePart.pos || '';
+                const zones = posStr.split(',').map(z => z.trim());
+                row.querySelectorAll('.multiselect-options input[type="checkbox"]').forEach(cb => {
+                    cb.checked = zones.includes(cb.value);
+                });
+                const header = row.querySelector('.multiselect-header');
+                header.innerHTML = (zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS') + '<span style="font-size:8px; float:right;"> ▼</span>';
+
+                row.querySelector('.part-ata').value = basePart.ata || '';
+                row.querySelector('.part-ipc').value = basePart.ipc || '';
+                row.classList.remove('row-exception');
+                row.dataset.status = 'standard';
+                const controls = row.querySelector('.override-controls');
+                if (controls) controls.remove();
+            }
+        }
+
+        window.forceUpdateStandard = async function(btn) {
+            if(!confirm("⚠️ ¿Modificar el Catálogo Maestro y sincronizar la flota con este P/N?")) return;
+            
+            const row = btn.closest('.component-row-wrapper');
+            const catalogCode = row.dataset.catalogSource;
+            if(!catalogCode) return alert("Error de origen.");
+            const id = row.dataset.id;
+            
+            const appEl = row.querySelector('.part-app');
+            const baseApp = efectividadesDB[catalogCode].parts[id]?.app || '';
+            
+            const newData = {
+                desc: row.querySelector('.part-desc').value.trim().toUpperCase(),
+                pn: row.querySelector('.part-pn').value.trim().toUpperCase(),
+                pos: row.querySelector('.part-pos').value.trim().toUpperCase(),
+                ata: row.querySelector('.part-ata').value.trim().toUpperCase(),
+                ipc: row.querySelector('.part-ipc') ? row.querySelector('.part-ipc').value.trim().toUpperCase() : (efectividadesDB[catalogCode].parts[id]?.ipc || ''),
+                app: appEl ? appEl.value.trim().toUpperCase() : baseApp
+            };
+
+            await dbSet(ref(db, `efectividades/${catalogCode}/parts/${id}`), newData);
+            
+            const reg = document.getElementById('modal-plane-reg').value.trim().toUpperCase();
+            if (flotaDB[reg] && flotaDB[reg].exceptions && flotaDB[reg].exceptions[id]) {
+                await dbSet(ref(db, `pns_aviones/${reg}/exceptions/${id}`), null);
+            }
+            showToast("Catálogo Sincronizado");
+            closeModal('avion-modal');
+        }
+
+        // B2 FIX: Siempre 3 dígitos - "19" -> "019", evita "19" vs "019" duplicados
+        window.savePlaneData = function() {
+            const reg = document.getElementById('modal-plane-reg').value.trim().toUpperCase();
+            if (!reg || reg.length !== 6) return alert("Matrícula inválida.");
+
+            let appCode = document.getElementById('modal-plane-appcode').value.trim().replace(/\D/g,'');
+            if(appCode) appCode = appCode.padStart(3,'0'); else appCode = '';
+            const rows = document.getElementById('plane-components-container').querySelectorAll('.component-row-wrapper');
+            
+            let exceptions = {};
+            let expectedBaseParts = {};
+            
+            if (appCode !== '') {
+                if (isEffectivityStrictlyValid(appCode)) {
+                    Object.values(efectividadesDB).forEach(catalog => {
+                        if(catalog.parts) {
+                            Object.keys(catalog.parts).forEach(partId => {
+                                if(isAppMatch(appCode, catalog.parts[partId].app, catalog.catalogCode)) {
+                                    expectedBaseParts[partId] = catalog.parts[partId];
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
+            const rowsInDom = new Set();
+
+            rows.forEach(row => {
+                const id = row.dataset.id;
+                const isBase = row.dataset.isBase === 'true';
+                const desc = row.querySelector('.part-desc').value.trim().toUpperCase();
+                const pn = row.querySelector('.part-pn').value.trim().toUpperCase();
+                const pos = row.querySelector('.part-pos').value.trim().toUpperCase();
+                const ata = row.querySelector('.part-ata').value.trim().toUpperCase();
+                const ipc = row.querySelector('.part-ipc').value.trim().toUpperCase();
+                
+                if (!desc || !pn) return;
+                const currentData = { desc, pn, pos, ata, ipc };
+                rowsInDom.add(id);
+
+                if (isBase) {
+                    if (expectedBaseParts[id]) {
+                        const base = expectedBaseParts[id];
+                        if (base.desc !== desc || base.pn !== pn || base.pos !== pos || base.ata !== ata || (base.ipc || '') !== ipc) {
+                            exceptions[id] = currentData;
+                        }
+                    }
+                } else { 
+                    exceptions[id] = currentData; 
+                }
+            });
+
+            Object.keys(expectedBaseParts).forEach(baseId => {
+                if (!rowsInDom.has(baseId)) exceptions[baseId] = { _deleted: true }; 
+            });
+
+            dbSet(ref(db, `pns_aviones/${reg}`), { reg, appCode, exceptions }).then(() => {
+                closeModal('avion-modal');
+                document.getElementById('plane-select').value = reg;
+                loadSelectedPlane(); 
+                showToast("Avión Guardado Correctamente");
+            });
+        }
+
+        window.openPlaneModal = function(isEdit = false) {
+            if (isEdit && !isLeaderOrAdmin()) return;   // el tecnico crea aviones, no edita el avion completo
+            const regInput = document.getElementById('modal-plane-reg');
+            const appCodeInput = document.getElementById('modal-plane-appcode');
+            const container = document.getElementById('plane-components-container');
+            container.innerHTML = '';
+            
+            if (isEdit && currentLoadedReg) {
+                regInput.value = currentLoadedReg; regInput.disabled = true;
+                const plane = flotaDB[currentLoadedReg];
+                
+                if(plane.appCode) {
+                    let val = plane.appCode.replace(/[^0-9]/g, '');
+                    appCodeInput.value = val ? val.padStart(3, '0') : '';
+                } else {
+                    appCodeInput.value = '';
+                }
+                
+                const mergedParts = getMergedPlaneParts(currentLoadedReg);
+                mergedParts.sort((a, b) => (a.desc || "").localeCompare(b.desc || ""));
+                
+                mergedParts.forEach(p => {
+                    addComponentRow('plane-components-container', p.id, p.isBase, p.status, p.desc, p.pn, p.pos, p.ata, p.ipc, p.app, p._catalogSource);
+                });
+            } else {
+                regInput.value = ''; regInput.disabled = false;
+                appCodeInput.value = '';
+                addComponentRow('plane-components-container', generateId(), false, 'custom', '', '', '', '', '', '', null);
+            }
+            document.getElementById('modal-title').innerText = isEdit ? `✏️ EDITAR ${currentLoadedReg}` : '✈️ AGREGAR AVIÓN';
+            document.getElementById('avion-modal').style.display = 'block';
+        }
+
+        window.deleteAvion = function() {
+            if (!isLeaderOrAdmin() || !currentLoadedReg) return;
+            if (prompt(`⚠️ Eliminar ${currentLoadedReg}.\nEscriba la matrícula para confirmar:`) === currentLoadedReg) {
+                dbSet(ref(db, `pns_aviones/${currentLoadedReg}`), null).then(() => {
+                    showToast("Avión Eliminado"); resetView();
+                });
+            }
+        }
+        
+        window.formatMatricula = function(input) {
+            let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); 
+            if (val.length > 2) input.value = val.substring(0, 2) + '-' + val.substring(2, 5); else input.value = val;
+        }
+        window.copyPN = function(text) { navigator.clipboard.writeText(text).then(() => showToast("📋 Copiado al Portapapeles")); }
+        window.closeModal = function(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        window.toggleMode = toggleMode;
+    </script>
+</body>
+</html>
