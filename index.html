@@ -128,8 +128,6 @@
 
         .top-bar-left { display: flex; gap: 5px; }
 
-        body:not(.team-leader-mode) .leader-only { display: none !important; }
-
         /* Título de documento */
         .main-header-wrapper {
             position: relative;
@@ -520,7 +518,7 @@
                 <span id="logged-user" class="leader-only" style="font-size: 10px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); padding: 0 10px; border-radius: var(--button-radius); background: var(--surface-soft); display: none; align-items: center; height: var(--button-height); box-sizing: border-box; margin: 0;"></span>
                 <button type="button" id="btn-logout" class="btn-danger-outline" onclick="logoutFull()" style="width:28px; min-width:28px; padding:0; display:none; font-size:14px; flex:none;">✖</button>
                 <button type="button" id="btn-check-mode" class="btn-outline btn-check-mode leader-only" onclick="toggleCheckMode()" style="display:none; padding:0 10px; font-size:10px;">☑️ MODO CHECK</button>
-                <button type="button" id="btn-gestor-pn" class="btn-outline leader-only" onclick="openEffManager()" style="padding:0 10px; font-size:10px;">⚙️ GESTOR DE P/N</button>
+                <button type="button" id="btn-gestor-pn" class="btn-outline leader-only" onclick="openEffManager()" style="display:none; padding:0 10px; font-size:10px;">⚙️ GESTOR DE P/N</button>
                 <button type="button" id="btn-admin" class="btn-outline leader-only" onclick="openAdminModal()" style="display:none; padding:0 10px; font-size:10px;" title="Administrar usuarios autorizados">⚙ ADMIN</button>
             </div>
         </div>
@@ -540,8 +538,8 @@
                     <span id="plane-eff-badge" class="badge-eff" style="display: none;"></span>
                 </div>
             </div>
-            <div class="selector-actions leader-only">
-                <button class="btn-leader" onclick="openPlaneModal(false)">➕ NUEVO AVIÓN</button>
+            <div class="selector-actions leader-only tech-only" style="display: none;">
+                <button class="btn-leader" id="btn-new-plane" onclick="openPlaneModal(false)">➕ NUEVO AVIÓN</button>
                 <button class="btn-outline" id="btn-edit-plane" onclick="openPlaneModal(true)" style="display: none;">✏️ EDITAR</button>
                 <button class="btn-danger-outline" id="btn-delete-plane" onclick="deleteAvion()" style="display: none;">🗑️ BORRAR</button>
             </div>
@@ -562,7 +560,7 @@
             
             <div id="zone-filter-alert"></div>
             
-            <div id="plane-actions-bar" class="leader-only" style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <div id="plane-actions-bar" class="leader-only tech-only" style="display: none; justify-content: flex-end; margin-bottom: 10px;">
                 <button class="btn-leader" onclick="openAddCustomPartModal()">➕ AÑADIR COMPONENTE (SOLO ESTE AVIÓN)</button>
             </div>
             
@@ -758,7 +756,7 @@
             </div>
             <input type="hidden" id="sp-id">
             <div class="modal-footer" style="margin-top: 20px;">
-                <button class="btn-danger-outline leader-only" id="btn-sp-revert" onclick="revertSinglePart()" style="margin-right: auto; display:none;">↺ REVERTIR AL ESTÁNDAR</button>
+                <button class="btn-danger-outline leader-only tech-only" id="btn-sp-revert" onclick="revertSinglePart()" style="margin-right: auto; display:none;">↺ REVERTIR AL ESTÁNDAR</button>
                 <button class="btn-outline" onclick="closeModal('single-part-modal')">CANCELAR</button>
                 <button class="btn-leader" onclick="saveSinglePart()">💾 GUARDAR</button>
             </div>
@@ -817,7 +815,10 @@
         // La identidad es SIEMPRE el correo completo. Se aceptan también el alias sin
         // dominio para no dejar fuera cuentas antiguas ni listas ya cargadas en Firebase.
         function normalizeEmail(email) {
-            return (email || '').trim().toLowerCase();
+            if (typeof email !== 'string') {
+                email = String(email || '');
+            }
+            return email.trim().toLowerCase();
         }
         function aliasCandidates(id) {
             const n = normalizeEmail(id);
@@ -911,7 +912,7 @@
             rolesUnsubs.push(onValue(superAdminsRef, (snapshot) => {
                 const v = snapshot.val();
                 if(Array.isArray(v)) superAdmins = v;
-                else if(v && typeof v==='object') superAdmins = Object.values(v);
+                else if(v && typeof v==='object') superAdmins = Object.keys(v);
                 else superAdmins = [];
                 updateAdminUI();
                 refreshAdminListIfOpen();
@@ -964,11 +965,11 @@ function isTechUser() {
     return !!(rec.tech || rec.tl || rec.admin);
 }
 
-function isLeaderOrAdmin() {
-    const u = sessionUser() || '';
+function isLeaderOrAdmin(u) {
+    u = u || sessionUser() || '';
     if (isSuperAdmin(u)) return true;
     const rec = usuariosDB[userKeyFor(u)] || {};
-    return !!(rec.tl || rec.admin);
+    return !!rec.tl || !!rec.admin;
 }
         
 
@@ -1228,6 +1229,29 @@ function activateLeaderUI() {
             updateAdminUI();
         }
 
+        function activateTechUI() {
+            document.body.classList.add('tech-mode');
+            document.body.classList.remove('team-leader-mode');
+            isTeamLeader = false;
+            const btnToggle = document.getElementById('btn-mode-toggle');
+            updateUserButton();
+            btnToggle.style.background = "";
+            btnToggle.style.color = "";
+            btnToggle.style.border = "";
+            btnToggle.classList.remove('btn-mode-leader');
+            
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) btnLogout.style.display = 'inline-flex';
+
+            const btnCheckMode = document.getElementById('btn-check-mode');
+            if (btnCheckMode) btnCheckMode.style.display = 'inline-flex';
+
+            const loggedUserSpan = document.getElementById('logged-user');
+            if (loggedUserSpan) loggedUserSpan.style.display = 'none';
+
+            updateAdminUI();
+        }
+
         function toggleMode() {
             if (isTeamLeader) { deactivateLeaderUI(); return; }
             // La identidad viene solo de Google: si no hay sesión, se muestra la pantalla de login.
@@ -1236,7 +1260,8 @@ function activateLeaderUI() {
                 showToast('🔒 INICIO DE SESIÓN OBLIGATORIO: USA LA PANTALLA DE LOGIN');
                 return;
             }
-            if (isAuthorizedUser(u)) activateLeaderUI();
+            if (isLeaderOrAdmin(u)) activateLeaderUI();
+            else if (isAuthorizedUser(u)) activateTechUI();
         }
 
         let usuariosLoaded = false;
@@ -1288,12 +1313,13 @@ function activateLeaderUI() {
             return !!rec.tl || !!rec.admin;
         }
         // Un tecnico tambien entra a la UI completa: modo check, crear avion y tarjetas de componentes
-        function isAuthorizedUser(u) {
-            if (!u) return false;
-            if (isSuperAdmin(u)) return true;
-            const rec = usuariosDB[userKeyFor(u)] || {};
-            return !!(rec.tech || rec.tl || rec.admin);
-        }
+function isAuthorizedUser(u) {
+    u = u || sessionUser() || '';
+    if (!u) return false;
+    if (isSuperAdmin(u)) return true;
+    const rec = usuariosDB[userKeyFor(u)] || {};
+    return !!(rec.tech || rec.tl || rec.admin);
+}
 
         function attachData() {
             if (dataAttached) return;
@@ -1370,16 +1396,19 @@ function activateLeaderUI() {
     }
 
     if (u && canLogin(u)) {
-        // La sesion puede venir restaurada (compartida con la otra app) sin pasar por el boton:
-        // hay que asegurar el indice de uids o las reglas no dareian permisos.
         const g = googleUser();
         if (g && !uidLinked) { uidLinked = true; linkUid(g, u).catch(() => {}); }
         overlay.style.display = 'none';
         attachData();
-        if (isAuthorizedUser(u)) {
+        const isTech = isAuthorizedUser(u);
+        const isLeader = isLeaderOrAdmin(u);
+        if (isLeader) {
             activateLeaderUI();
+        } else if (isTech) {
+            activateTechUI();
         } else {
             if (isTeamLeader) deactivateLeaderUI();
+            document.body.classList.remove('tech-mode');
             updateUserButton();
         }
         updateAdminUI();
@@ -1417,16 +1446,22 @@ function activateLeaderUI() {
         async function linkUid(fu, email) {
             const correo = normalizeEmail(fu.email || email);
             const key = userKeyFor(correo);
-            // el indice de las reglas debe apuntar siempre a la clave real del registro
             await dbSet(ref(db, 'uids/' + fu.uid), sanitizeKey(key), 'REGISTRAR UID');
-            const rec = usuariosDB[key];
+            let rec = usuariosDB[key];
+            if (!rec && isSuperAdmin(correo)) {
+                rec = userRec(correo);
+                rec.email = correo;
+                rec.usuario = true; rec.tech = true; rec.tl = true; rec.admin = true;
+                syncRoleArrays();
+                await dbSet(ref(db, 'usuarios'), buildUsuarios(), 'REGISTRAR SUPER-ADMIN');
+                showToast("✅ Super-admin registrado en usuarios");
+            }
             if (!rec) return;
             let dirty = false;
             if (fu.uid && rec.uid !== fu.uid) { rec.uid = fu.uid; dirty = true; }
             if (rec.email !== correo) { rec.email = correo; dirty = true; }
-            if (dirty) {
-                // solo un admin puede escribir usuarios: si no lo es, el indice ya quedo listo
-                try { await set(ref(db, 'usuarios'), buildUsuarios()); } catch (e) {}
+            if (dirty && isAdminUser()) {
+                try { await dbSet(ref(db, 'usuarios'), buildUsuarios(), 'ACTUALIZAR USUARIOS'); } catch (e) {}
             }
         }
         let loggingOut = false;
@@ -1451,6 +1486,9 @@ function activateLeaderUI() {
     const btnGestorPn = document.getElementById('btn-gestor-pn');
     const btnEditPlane = document.getElementById('btn-edit-plane');
     const btnDeletePlane = document.getElementById('btn-delete-plane');
+    const btnNewPlane = document.getElementById('btn-new-plane');
+    const selectorActions = document.querySelector('.selector-actions.leader-only.tech-only');
+    const planeActionsBar = document.getElementById('plane-actions-bar');
     
     // 🛡️ SOLO ADMIN / SUPER ADMIN
     const isAdmin = isSuperAdmin(currentUser) || adminList.includes(currentUser);
@@ -1463,9 +1501,20 @@ function activateLeaderUI() {
     // ✈️ TEAM LEADER O ADMIN (Editar o Borrar el Avión completo)
     if (btnEditPlane) btnEditPlane.style.display = (isTeamLeader && isLeader && currentLoadedReg) ? 'inline-flex' : 'none';
     if (btnDeletePlane) btnDeletePlane.style.display = (isTeamLeader && isLeader && currentLoadedReg) ? 'inline-flex' : 'none';
-    // ↺ Revertir excepcion/pieza custom: solo TL o admin (el tecnico edita la tarjeta, pero no elimina)
+    
+    // ➕ NUEVO AVIÓN: TL/Admin siempre, Tech solo si no hay avión o el ingresado no existe
+    const inputReg = document.getElementById('plane-select')?.value.trim().toUpperCase() || '';
+    const planeExists = inputReg && flotaDB[inputReg];
+    const showNewPlane = isTeamLeader && isLeader || (isAuthorizedUser(currentUser) && (!currentLoadedReg || !planeExists));
+    if (selectorActions) selectorActions.style.display = showNewPlane ? 'flex' : 'none';
+    if (btnNewPlane) btnNewPlane.style.display = showNewPlane ? 'inline-flex' : 'none';
+    
+    if (planeActionsBar) planeActionsBar.style.display = ((isTeamLeader && isLeader) || isAuthorizedUser(currentUser)) ? 'flex' : 'none';
+    
+    // ↺ Revertir excepcion/pieza custom: TL, admin o tech
     const btnSpRevert = document.getElementById('btn-sp-revert');
-    if (btnSpRevert) btnSpRevert.style.display = (isTeamLeader && isLeader) ? 'inline-flex' : 'none';
+    const isTech = isAuthorizedUser(currentUser);
+    if (btnSpRevert) btnSpRevert.style.display = ((isTeamLeader && isLeader) || isTech) ? 'inline-flex' : 'none';
 }
 
         function refreshAdminListIfOpen() {
@@ -1474,6 +1523,11 @@ function activateLeaderUI() {
         }
 
         window.openAdminModal = function() {
+            const u = sessionUser();
+            if (!isSuperAdmin(u) && !adminList.includes(u)) {
+                showToast("⚠️ Solo Super Admin o Admin pueden gestionar usuarios.");
+                return;
+            }
             document.getElementById('admin-name').value = '';
             document.getElementById('admin-realname').value = '';
             document.getElementById('admin-search').value = '';
@@ -1861,6 +1915,7 @@ window.adminToggleUsuario = function(user) {
                 if (currentLoadedReg) {
                     resetView();
                 }
+                updateAdminUI();
                 return;
             }
             
@@ -1871,6 +1926,7 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('main-plane-area').style.display = 'block';
             
             renderPlaneData();
+            updateAdminUI();
         }
 
         function renderPlaneData() {
@@ -1979,7 +2035,7 @@ window.adminToggleUsuario = function(user) {
                             <div style="display: flex; gap: 5px; align-items: center;">
                                 ${badge}
                                 <button class="btn-action-small btn-verify-part" onclick="verifyPart('${part.id}')">✔️ CONFIRMAR</button>
-                                <button class="btn-action-small leader-only" style="height: var(--button-height); font-size: 9px; padding: 0 6px;" onclick="editSinglePart('${part.id}')">✏️ EDITAR</button>
+                                <button class="btn-action-small leader-only tech-only" style="height: var(--button-height); font-size: 9px; padding: 0 6px;" onclick="editSinglePart('${part.id}')">✏️ EDITAR</button>
                             </div>
                         </div>
                         <div class="pn-value-container">
@@ -2008,10 +2064,11 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('zone-filter-alert').innerHTML = '';
             
             localStorage.removeItem('saved_plane_reg');
+            updateAdminUI();
         }
 
         window.editSinglePart = function(partId) {
-            if (!isTeamLeader || !currentLoadedReg) return;
+            if (!isAuthorizedUser(sessionUser()) || !currentLoadedReg) return;
             const parts = getMergedPlaneParts(currentLoadedReg);
             const part = parts.find(p => p.id === partId);
             if (!part) return;
@@ -2052,7 +2109,7 @@ window.adminToggleUsuario = function(user) {
         }
 
         window.openAddCustomPartModal = function() {
-            if (!isTeamLeader || !currentLoadedReg) return;
+            if (!isAuthorizedUser(sessionUser()) || !currentLoadedReg) return;
             document.getElementById('sp-modal-title').innerText = '➕ AÑADIR COMPONENTE';
             document.getElementById('sp-id').value = generateId(); 
             document.getElementById('sp-desc').value = '';
@@ -2072,7 +2129,7 @@ window.adminToggleUsuario = function(user) {
         }
 
         window.saveSinglePart = function() {
-            if (!isTeamLeader || !currentLoadedReg) return;
+            if (!isAuthorizedUser(sessionUser()) || !currentLoadedReg) return;
             const partId = document.getElementById('sp-id').value;
             const desc = document.getElementById('sp-desc').value.trim().toUpperCase();
             const pn = document.getElementById('sp-pn').value.trim().toUpperCase();
@@ -2101,12 +2158,19 @@ window.adminToggleUsuario = function(user) {
         }
 
         window.revertSinglePart = function() {
-            if (!isLeaderOrAdmin() || !currentLoadedReg) return;
+            if (!isAuthorizedUser(sessionUser()) || !currentLoadedReg) return;
             const partId = document.getElementById('sp-id').value;
+            const isLeader = isLeaderOrAdmin(sessionUser());
+            if (!isLeader) {
+                showToast("⚠️ Solo TL/Admin pueden revertir. Solicítalo a tu Team Leader.");
+                return;
+            }
             if(confirm("¿Seguro que desea eliminar esta excepción/pieza custom? Si aplica, se revertirá al estándar del catálogo.")) {
                 dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions/${partId}`), null).then(() => {
                     closeModal('single-part-modal');
                     showToast("✅ Pieza revertida / eliminada");
+                }).catch(() => {
+                    showToast("⚠️ Error al revertir (verifica permisos)");
                 });
             }
         }
@@ -2295,8 +2359,8 @@ window.adminToggleUsuario = function(user) {
                 overrideHtml = `
                     <div class="override-controls">
                         <span style="font-size:9px; color:var(--warning); margin-right:auto; font-weight:bold;">⚠️ EXCEPCIÓN LOCAL</span>
-                        <button class="btn-action-small" onclick="revertRowToStandard(this)">↺ REVERTIR AL ESTÁNDAR</button>
-                        <button class="btn-action-small" style="background: var(--primary); color:var(--surface); border-color: var(--primary);" onclick="forceUpdateStandard(this)">⬆️ FORZAR A FLOTA</button>
+                        <button class="btn-action-small leader-only tech-only" onclick="revertRowToStandard(this)">↺ REVERTIR AL ESTÁNDAR</button>
+                        <button class="btn-action-small leader-only" style="background: var(--primary); color:var(--surface); border-color: var(--primary);" onclick="forceUpdateStandard(this)">⬆️ FORZAR A FLOTA</button>
                     </div>`;
             } else if (isPlaneModal && status === 'custom') {
                  overrideHtml = `<div class="override-controls"><span style="font-size:9px; color:var(--indigo); font-weight:bold;">➕ PIEZA CUSTOM (No existe en catálogo)</span></div>`;
@@ -2347,9 +2411,18 @@ window.adminToggleUsuario = function(user) {
         window.revertRowToStandard = function(btn) {
             const row = btn.closest('.component-row-wrapper');
             const catalogCode = row.dataset.catalogSource;
-            if(!catalogCode || !efectividadesDB[catalogCode]) return;
+            const partId = row.dataset.id;
+            const planeReg = document.getElementById('modal-plane-reg').value.trim().toUpperCase();
+            
+            if(!catalogCode || !efectividadesDB[catalogCode] || !planeReg) return;
 
-            const basePart = efectividadesDB[catalogCode].parts[row.dataset.id];
+            const isLeader = isLeaderOrAdmin(sessionUser());
+            if (!isLeader) {
+                showToast("⚠️ Solo TL/Admin pueden revertir. Solicítalo a tu Team Leader.");
+                return;
+            }
+
+            const basePart = efectividadesDB[catalogCode].parts[partId];
             if (basePart) {
                 row.querySelector('.part-desc').value = basePart.desc || '';
                 row.querySelector('.part-pn').value = basePart.pn || '';
@@ -2369,10 +2442,18 @@ window.adminToggleUsuario = function(user) {
                 row.dataset.status = 'standard';
                 const controls = row.querySelector('.override-controls');
                 if (controls) controls.remove();
+
+                dbSet(ref(db, `pns_aviones/${planeReg}/exceptions/${partId}`), null)
+                    .then(() => showToast("✅ Revertido al estándar y guardado"))
+                    .catch(() => showToast("⚠️ Cambio local (sin guardar en servidor)"));
             }
         }
 
         window.forceUpdateStandard = async function(btn) {
+            if (!isLeaderOrAdmin(sessionUser())) {
+                showToast("⚠️ Solo TL/Admin pueden forzar al catálogo maestro.");
+                return;
+            }
             if(!confirm("⚠️ ¿Modificar el Catálogo Maestro y sincronizar la flota con este P/N?")) return;
             
             const row = btn.closest('.component-row-wrapper');
@@ -2405,6 +2486,12 @@ window.adminToggleUsuario = function(user) {
         // B2 FIX: Siempre 3 dígitos - "19" -> "019", evita "19" vs "019" duplicados
         window.savePlaneData = function() {
             const reg = document.getElementById('modal-plane-reg').value.trim().toUpperCase();
+            const regInputEl = document.getElementById('modal-plane-reg');
+            const isEdit = regInputEl && !regInputEl.disabled && flotaDB[reg];
+            if (isEdit && !isLeaderOrAdmin(sessionUser())) {
+                showToast("⚠️ Solo TL/Admin pueden editar aviones existentes.");
+                return;
+            }
             if (!reg || reg.length !== 6) return alert("Matrícula inválida.");
 
             let appCode = document.getElementById('modal-plane-appcode').value.trim().replace(/\D/g,'');
@@ -2492,7 +2579,8 @@ window.adminToggleUsuario = function(user) {
                     addComponentRow('plane-components-container', p.id, p.isBase, p.status, p.desc, p.pn, p.pos, p.ata, p.ipc, p.app, p._catalogSource);
                 });
             } else {
-                regInput.value = ''; regInput.disabled = false;
+                const inputReg = document.getElementById('plane-select')?.value.trim().toUpperCase() || '';
+                regInput.value = inputReg; regInput.disabled = false;
                 appCodeInput.value = '';
                 addComponentRow('plane-components-container', generateId(), false, 'custom', '', '', '', '', '', '', null);
             }
