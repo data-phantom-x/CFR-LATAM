@@ -2,8 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CFR - LATAM</title>
+    <!-- PWA -->
+    <meta name="theme-color" content="#2A0087">
+    <meta name="msapplication-TileColor" content="#2A0087">
+    <meta name="msapplication-TileImage" content="icons/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CFR">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
@@ -19,7 +32,7 @@
             --help: #FF9900;
             --warning: #F59E0B;
             --comment: #6B5E8A;
-            --celeste: #E6F0F8;
+            --celeste: #EDF5FF;
             --button-height: 29px;
             --button-height-banner: 24px;
             --button-height-admin: 20px;
@@ -121,12 +134,17 @@
 
         /* Barra superior general */
         .top-bar {
-            display: flex; justify-content: space-between; margin-bottom: 8px; min-height: 32px;
-            background-color: var(--light-gray); padding: 4px 10px;
+            display: flex; justify-content: space-between; margin-bottom: 8px; min-height: 38px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #EDF5FF 40%, #D4E8F7 100%); padding: 4px 12px;
+            border-radius: 14px 0 14px 0; border: 1px solid #AECCE8;
             border-radius: 12px 0 12px 0; align-items: center; position: relative;
         }
 
-        .top-bar-left { display: flex; gap: 5px; }
+        .top-bar-left { display: flex; gap: 5px; align-items: center; }
+        .brand-cfr { display: inline-flex; align-items: center; text-decoration: none; flex: none !important; margin-right: 8px; cursor: default; padding-right: 8px; border-right: 1px solid var(--border-soft); }
+        .brand-cfr img { height: 28px; width: auto; }
+        .top-bar-actions { display: flex; gap: 6px; align-items: center; flex: none; }
+        .live-clock { display: flex; gap: 6px; font-size: 10px; font-weight: 600; color: var(--primary); background: transparent; padding: 0 8px; border-radius: var(--button-radius); border: 1px solid var(--border-soft); align-items: center; justify-content: center; height: var(--button-height); box-sizing: border-box; margin-left: auto; }
 
         /* Título de documento */
         .main-header-wrapper {
@@ -134,7 +152,7 @@
             display: flex; align-items: center; justify-content: center;
             margin-bottom: 10px; padding: 10px 0;
             min-height: 40px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--cyan)) no-repeat bottom / 100% 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent)) no-repeat bottom / 100% 3px;
             flex-wrap: wrap; gap: 20px;
         }
         
@@ -422,6 +440,7 @@
             opacity: 0; transition: opacity 0.3s, visibility 0.3s; border-left: 4px solid var(--accent);
         }
         #toast.show { visibility: visible; opacity: 1; }
+        .field-invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 20%, transparent) !important; background-color: color-mix(in srgb, var(--danger) 6%, var(--surface)) !important; }
 
         @media (max-width: 800px) {
             body { padding: 8px; }
@@ -514,7 +533,11 @@
 </head>
 <body>
     <div id="boot-splash">
-        <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/Latam-airlines-logo-light.svg" alt="LATAM Airlines">
+        <div style="display:inline-flex; align-items:center; justify-content:center; gap:16px; background:#FFFFFF; border-radius:20px 0 20px 0; padding:14px 22px; box-shadow:0 12px 32px color-mix(in srgb, var(--black) 40%, transparent); border:1px solid color-mix(in srgb, var(--border) 60%, transparent); margin-bottom:6px;">
+            <img src="icons/cfr-logo.svg" alt="CFR" style="height:56px; width:auto;">
+            <span style="width:1px; height:48px; background:linear-gradient(to bottom, transparent, var(--border) 30%, var(--border) 70%, transparent);"></span>
+            <img src="latam-airlines-logo.svg" alt="LATAM Airlines" style="height:40px; width:auto;">
+        </div>
         <div class="boot-title">CABIN FURNISHINGS REPORT</div>
         <div class="boot-spinner"></div>
         <div class="boot-sub" id="boot-sub-text">CONECTANDO CON EL SERVIDOR...</div>
@@ -528,7 +551,11 @@
 
     <div id="login-obligatorio" class="login-screen" style="display:none;">
         <div class="login-card">
-            <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/latam-airlines-logo.svg" alt="LATAM Airlines">
+            <div style="display:inline-flex; align-items:center; justify-content:center; gap:16px; margin:0 auto 8px; padding:10px 16px; background:var(--surface-soft); border-radius:12px 0 12px 0; border:1px solid var(--border-soft);">
+                <img src="icons/cfr-logo.svg" alt="CFR" style="height:48px; width:auto;">
+                <span style="width:1px; height:36px; background:linear-gradient(to bottom, transparent, var(--border) 30%, var(--border) 70%, transparent);"></span>
+                <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/latam-airlines-logo.svg" alt="LATAM Airlines" style="height:36px; width:auto;">
+            </div>
             <div id="login-card-title" class="login-title">CABIN FURNISHINGS REPORT</div>
             <div class="login-sub">ACCESO RESTRINGIDO · PERSONAL AUTORIZADO</div>
             <button id="login-google-btn" class="login-btn login-btn-google" onclick="doGoogleLogin()"><span class="g-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path fill="var(--google-blue)" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="var(--google-green)" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="var(--google-yellow)" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="var(--google-red)" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></span> ENTRAR CON GOOGLE</button>
@@ -540,6 +567,8 @@
     <div class="container">
         <div class="top-bar no-print">
             <div class="top-bar-left">
+                <img src="icons/cfr-logo.svg" height="30" style="flex:none; margin-right:8px; width:auto;" alt="CFR">
+                <span style="width:1px; height:28px; background:var(--border-soft); margin-right:8px; flex:none;"></span>
                 <button type="button" id="btn-mode-toggle" class="btn-accent btn-top" onclick="toggleMode()">👤 USUARIO</button>
                 <span id="logged-user" class="leader-only" style="font-size: 10px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); padding: 0 10px; border-radius: var(--button-radius); background: var(--surface-soft); display: none; align-items: center; height: var(--button-height); box-sizing: border-box; margin: 0;"></span>
                 <button type="button" id="btn-logout" class="btn-danger-outline" onclick="logoutFull()" style="width:28px; min-width:28px; padding:0; display:none; font-size:14px; flex:none;">✖</button>
@@ -553,7 +582,7 @@
             <div class="logo-container">
                 <img src="https://raw.githubusercontent.com/data-phantom-x/CFR-LATAM/refs/heads/main/latam-airlines-logo.svg" alt="LATAM Logo">
             </div>
-            <h1 class="document-header" title="Cabin Furnishings Report">CFR<span style="font-size: 9px; font-weight: 600; color: var(--comment); letter-spacing: 1.2px;">CABIN FURNISHINGS REPORT</span></h1>
+            <h1 class="document-header" title="Cabin Furnishings Report"><span style="font-size: 1.1em; font-weight: 900; color: var(--primary); letter-spacing: 2px;">CABIN FURNISHINGS REPORT</span></h1>
         </div>
 
         <div class="plane-selector-card">
@@ -758,20 +787,17 @@
             </div>
             <div class="modal-form-group" style="margin-bottom: 12px;">
                 <label style="font-size: 10px; font-weight: bold; color: var(--primary); display:block; margin-bottom:5px;">ZONA(S):</label>
-                <div class="custom-multiselect" style="width: 100%;">
-                    <div class="multiselect-header" id="sp-pos-header" onclick="toggleMulti(this)">ZONAS<span style="font-size:8px; float:right;"> ▼</span></div>
-                    <div class="multiselect-options" id="sp-pos-options">
-                        <label><input type="checkbox" value="FWD" onchange="updateMultiValue(this)"> FWD</label>
-                        <label><input type="checkbox" value="AFT" onchange="updateMultiValue(this)"> AFT</label>
-                        <label><input type="checkbox" value="MCD CENTRAL" onchange="updateMultiValue(this)"> MCD CENTRAL</label>
-                        <label><input type="checkbox" value="MCD LH" onchange="updateMultiValue(this)"> MCD LH</label>
-                        <label><input type="checkbox" value="MCD RH" onchange="updateMultiValue(this)"> MCD RH</label>
-                        <label><input type="checkbox" value="CAPTAIN SEAT" onchange="updateMultiValue(this)"> CAPTAIN SEAT</label>
-                        <label><input type="checkbox" value="F/O SEAT" onchange="updateMultiValue(this)"> F/O SEAT</label>
-                        <label><input type="checkbox" value="3RD OCCUPANT SEAT" onchange="updateMultiValue(this)"> 3RD OCCUPANT SEAT</label>
-                        <label><input type="checkbox" value="4TH OCCUPANT SEAT" onchange="updateMultiValue(this)"> 4TH OCCUPANT SEAT</label>
+                <div style="display:flex; flex-direction:column; gap:6px; align-items:stretch;">
+                    <select id="sp-pos-area" onchange="onAreaChangeSelect('sp-pos-options','sp-pos','sp-pos-header',this.value)" style="width:100%; height:28px;">
+                        <option value="CABINA">CABINA</option>
+                        <option value="COCKPIT">COCKPIT</option>
+                        <option value="TODAS">TODAS</option>
+                    </select>
+                    <div class="custom-multiselect" style="width:100%;">
+                        <div class="multiselect-header" id="sp-pos-header" onclick="toggleMulti(this)">ZONAS<span style="font-size:8px; float:right;"> ▼</span></div>
+                        <div class="multiselect-options" id="sp-pos-options"></div>
+                        <input type="hidden" id="sp-pos">
                     </div>
-                    <input type="hidden" id="sp-pos">
                 </div>
             </div>
             <div class="modal-form-group" style="margin-bottom: 12px;">
@@ -831,7 +857,8 @@
         let currentEditingCatalog = null;
         let isTeamLeader = false;
         let isCheckMode = false;
-        let isInitialLoad = true; 
+        let isInitialLoad = true;
+        let singlePartMode = 'add'; 
 
         let techUsers = [];
         let correosAutorizados = [];
@@ -1021,6 +1048,23 @@ function isLeaderOrAdmin(u) {
             { name: '4TH OCCUPANT SEAT', id: '4TH_OCCUPANT' }
         ];
 
+        const AREA_ZONES = {
+            'CABINA': ['FWD', 'AFT', 'MCD CENTRAL', 'MCD LH', 'MCD RH'],
+            'COCKPIT': ['CAPTAIN SEAT', 'F/O SEAT', '3RD OCCUPANT SEAT', '4TH OCCUPANT SEAT']
+        };
+        function areaForZones(zones) {
+            const z = (zones || []).map(x => (x||'').trim()).filter(Boolean);
+            if (!z.length) return 'CABINA';
+            const inCabin = z.every(x => AREA_ZONES.CABINA.includes(x));
+            const inCockpit = z.every(x => AREA_ZONES.COCKPIT.includes(x));
+            if (inCabin) return 'CABINA';
+            if (inCockpit) return 'COCKPIT';
+            return 'TODAS';
+        }
+        function zoneListForArea(area) {
+            if (area === 'TODAS') return [...AREA_ZONES.CABINA, ...AREA_ZONES.COCKPIT];
+            return AREA_ZONES[area] || AREA_ZONES.CABINA;
+        }
         // Zonas pertenecientes a cada vista (filtro de componentes)
         const VIEW_ZONES = {
             'CABINA': ['FWD', 'AFT', 'MCD CENTRAL', 'MCD LH', 'MCD RH'],
@@ -1038,11 +1082,172 @@ function isLeaderOrAdmin(u) {
         
         function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
         function escapeAttr(str){ return escapeHtml(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
-        function showToast(msg) {
+        let _toastTimer = null;
+        let _toastUndoCb = null;
+        function hideToast() {
             const toast = document.getElementById("toast");
-            toast.innerText = msg;
+            if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+            _toastUndoCb = null;
+            toast.className = toast.className.replace("show", "");
+        }
+        function showToast(msg, opts) {
+            opts = opts || {};
+            const toast = document.getElementById("toast");
+            if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+            _toastUndoCb = opts.undo || null;
+            const undoLabel = opts.undoLabel || 'DESHACER';
+            let html = '<span>' + (typeof msg === 'string' ? msg.replace(/</g,'&lt;') : msg) + '</span>';
+            if (opts.undo) {
+                html += ' <button type="button" id="toast-undo-btn" style="margin-left:10px;background:var(--surface);color:var(--primary);border:none;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:800;cursor:pointer;">' + undoLabel + '</button>';
+            }
+            toast.innerHTML = html;
+            if (opts.undo) {
+                const btn = document.getElementById('toast-undo-btn');
+                if (btn) btn.onclick = function() {
+                    const cb = _toastUndoCb;
+                    _toastUndoCb = null;
+                    if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+                    toast.className = toast.className.replace("show", "");
+                    if (cb) try { cb(); } catch (e) { console.error(e); }
+                };
+            }
             toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+            const dur = opts.duration || (opts.undo ? 10000 : 3000);
+            _toastTimer = setTimeout(() => {
+                toast.className = toast.className.replace("show", "");
+                _toastUndoCb = null;
+                _toastTimer = null;
+            }, dur);
+        }
+
+        // ---------- Borradores (autoguardado) ----------
+        function collectPlaneDraft() {
+            const reg = (document.getElementById('modal-plane-reg')?.value || '').trim().toUpperCase();
+            const appCode = (document.getElementById('modal-plane-appcode')?.value || '').trim();
+            const rows = [];
+            document.querySelectorAll('#plane-components-container .component-row-wrapper').forEach(row => {
+                rows.push({
+                    id: row.dataset.id,
+                    isBase: row.dataset.isBase === 'true',
+                    status: row.dataset.status,
+                    catalogSource: row.dataset.catalogSource || null,
+                    desc: row.querySelector('.part-desc')?.value || '',
+                    pn: row.querySelector('.part-pn')?.value || '',
+                    pos: row.querySelector('.part-pos')?.value || '',
+                    ata: row.querySelector('.part-ata')?.value || '',
+                    ipc: row.querySelector('.part-ipc')?.value || ''
+                });
+            });
+            return { reg, appCode, rows, ts: Date.now() };
+        }
+        function savePlaneDraft() {
+            const modal = document.getElementById('avion-modal');
+            if (!modal || modal.style.display !== 'block') return;
+            try { localStorage.setItem('draft_plane_modal', JSON.stringify(collectPlaneDraft())); } catch (e) {}
+        }
+        function clearPlaneDraft() { try { localStorage.removeItem('draft_plane_modal'); } catch (e) {} }
+        function hasPlaneDraft(reg) {
+            try {
+                const d = JSON.parse(localStorage.getItem('draft_plane_modal') || 'null');
+                if (!d || !d.ts || Date.now() - d.ts > 24*3600*1000) return null;
+                if (reg && d.reg && d.reg !== reg) return null;
+                if (!d.rows || !d.rows.length) return null;
+                return d;
+            } catch (e) { return null; }
+        }
+        function applyPlaneDraft(d) {
+            document.getElementById('modal-plane-reg').value = d.reg || '';
+            document.getElementById('modal-plane-appcode').value = d.appCode || '';
+            const container = document.getElementById('plane-components-container');
+            container.innerHTML = '';
+            (d.rows || []).forEach(r => {
+                addComponentRow('plane-components-container', r.id || generateId(), !!r.isBase, r.status || 'custom', (r.desc||'').toUpperCase(), (r.pn||'').toUpperCase(), (r.pos||'').toUpperCase(), (r.ata||'').toUpperCase(), (r.ipc||'').toUpperCase(), '', r.catalogSource);
+            });
+            savePlaneDraft();
+        }
+
+        function collectEffDraft(code) {
+            const rows = [];
+            document.querySelectorAll('#eff-components-container .component-row-wrapper').forEach(row => {
+                rows.push({
+                    id: row.dataset.id,
+                    desc: row.querySelector('.part-desc')?.value || '',
+                    pn: row.querySelector('.part-pn')?.value || '',
+                    pos: row.querySelector('.part-pos')?.value || '',
+                    ata: row.querySelector('.part-ata')?.value || '',
+                    ipc: row.querySelector('.part-ipc')?.value || '',
+                    app: row.querySelector('.part-app')?.value || ''
+                });
+            });
+            return { code, rows, ts: Date.now() };
+        }
+        function saveEffDraft() {
+            const modal = document.getElementById('eff-modal');
+            if (!modal || modal.style.display !== 'block') return;
+            const code = currentEditingCatalog;
+            if (!code) return;
+            try { localStorage.setItem('draft_eff_modal_' + code, JSON.stringify(collectEffDraft(code))); } catch (e) {}
+        }
+        function clearEffDraft(code) { try { localStorage.removeItem('draft_eff_modal_' + code); } catch (e) {} }
+        function hasEffDraft(code) {
+            try {
+                const d = JSON.parse(localStorage.getItem('draft_eff_modal_' + code) || 'null');
+                if (!d || !d.ts || Date.now() - d.ts > 24*3600*1000) return null;
+                if (!d.rows || !d.rows.length) return null;
+                return d;
+            } catch (e) { return null; }
+        }
+        function applyEffDraft(d) {
+            const container = document.getElementById('eff-components-container');
+            container.innerHTML = '';
+            (d.rows || []).forEach(r => {
+                addComponentRow('eff-components-container', r.id || generateId(), true, 'standard', (r.desc||'').toUpperCase(), (r.pn||'').toUpperCase(), (r.pos||'').toUpperCase(), (r.ata||'').toUpperCase(), (r.ipc||'').toUpperCase(), (r.app||'').toUpperCase(), currentEditingCatalog);
+            });
+            saveEffDraft();
+        }
+
+        function collectSingleDraft() {
+            const partId = document.getElementById('sp-id')?.value || '';
+            return {
+                mode: singlePartMode,
+                partId,
+                desc: document.getElementById('sp-desc')?.value || '',
+                pn: document.getElementById('sp-pn')?.value || '',
+                pos: document.getElementById('sp-pos')?.value || '',
+                area: document.getElementById('sp-pos-area')?.value || 'CABINA',
+                ata: document.getElementById('sp-ata')?.value || '',
+                ipc: document.getElementById('sp-ipc')?.value || '',
+                ts: Date.now()
+            };
+        }
+        function saveSingleDraft() {
+            const modal = document.getElementById('single-part-modal');
+            if (!modal || modal.style.display !== 'block') return;
+            try { localStorage.setItem('draft_single_part', JSON.stringify(collectSingleDraft())); } catch (e) {}
+        }
+        function clearSingleDraft() { try { localStorage.removeItem('draft_single_part'); } catch (e) {} }
+        function hasSingleDraft(mode, partId) {
+            try {
+                const d = JSON.parse(localStorage.getItem('draft_single_part') || 'null');
+                if (!d || !d.ts || Date.now() - d.ts > 24*3600*1000) return null;
+                if (d.mode !== mode) return null;
+                if (mode === 'edit' && d.partId !== partId) return null;
+                return d;
+            } catch (e) { return null; }
+        }
+        function applySingleDraft(d) {
+            document.getElementById('sp-desc').value = d.desc || '';
+            document.getElementById('sp-pn').value = d.pn || '';
+            document.getElementById('sp-ata').value = d.ata || '';
+            document.getElementById('sp-ipc').value = d.ipc || '';
+            const area = d.area || areaForZones((d.pos||'').split(','));
+            document.getElementById('sp-pos-area').value = area;
+            const posInput = document.getElementById('sp-pos');
+            const optionsDiv = document.getElementById('sp-pos-options');
+            const header = document.getElementById('sp-pos-header');
+            const zones = (d.pos||'').split(',').map(z=>z.trim()).filter(Boolean);
+            posInput.value = zones.join(', ');
+            setZoneOptions(optionsDiv, posInput, header, area, zones);
         }
 
         let _lastToastAt = 0;
@@ -1258,6 +1463,43 @@ function isLeaderOrAdmin(u) {
             span.innerHTML = ' ▼'; span.style.fontSize = '8px'; span.style.float = 'right';
             header.appendChild(span);
         };
+
+        // Rellena las opciones de zona de un multiselect según el área seleccionada
+        window.setZoneOptions = function(optionsEl, hiddenEl, headerEl, area, selectedZones) {
+            const sel = new Set((selectedZones || []).map(z => (z||'').trim()).filter(Boolean));
+            const list = zoneListForArea(area || 'CABINA');
+            optionsEl.innerHTML = list.map(z => `<label><input type="checkbox" value="${escapeAttr(z)}" onchange="updateMultiValue(this)" ${sel.has(z)?'checked':''}> ${escapeHtml(z)}</label>`).join('');
+            const checked = list.filter(z => sel.has(z));
+            hiddenEl.value = checked.join(', ');
+            headerEl.innerHTML = (checked.length ? checked.join(', ') : 'ZONAS') + '<span style="font-size:8px; float:right;"> ▼</span>';
+        };
+
+        // Cambio de área en un selector cascada (select + multiselect asociados)
+        window.onAreaChangeSelect = function(optionsId, hiddenId, headerId, area) {
+            const optionsEl = document.getElementById(optionsId);
+            const hiddenEl = document.getElementById(hiddenId);
+            const headerEl = document.getElementById(headerId);
+            const currentSelected = (hiddenEl.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+            // mantener solo las zonas válidas del nuevo área
+            const valid = new Set(zoneListForArea(area));
+            const kept = currentSelected.filter(z => valid.has(z));
+            setZoneOptions(optionsEl, hiddenEl, headerEl, area, kept);
+        };
+
+        // Cambio de área para cascadas inline (dentro de filas de addComponentRow)
+        window.onAreaCascadeChange = function(selectEl) {
+            const cascade = selectEl.closest('.zone-cascade');
+            if (!cascade) return;
+            const multiselect = cascade.querySelector('.custom-multiselect');
+            const optionsEl = multiselect.querySelector('.multiselect-options');
+            const hiddenEl = multiselect.querySelector('input[type="hidden"]');
+            const headerEl = multiselect.querySelector('.multiselect-header');
+            const area = selectEl.value;
+            const currentSelected = (hiddenEl.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+            const valid = new Set(zoneListForArea(area));
+            const kept = currentSelected.filter(z => valid.has(z));
+            setZoneOptions(optionsEl, hiddenEl, headerEl, area, kept);
+        };
         
         document.addEventListener('click', e => {
             if (!e.target.closest('.custom-multiselect')) {
@@ -1265,6 +1507,50 @@ function isLeaderOrAdmin(u) {
                     el.classList.remove('show');
                     el.classList.remove('drop-up');
                 });
+            }
+        });
+        // Autoguardado de borradores
+        const avionModal = document.getElementById('avion-modal');
+        if (avionModal) {
+            avionModal.addEventListener('input', savePlaneDraft);
+            avionModal.addEventListener('change', savePlaneDraft);
+        }
+        const effModal = document.getElementById('eff-modal');
+        if (effModal) {
+            effModal.addEventListener('input', saveEffDraft);
+            effModal.addEventListener('change', saveEffDraft);
+        }
+        const singleModal = document.getElementById('single-part-modal');
+        if (singleModal) {
+            singleModal.addEventListener('input', saveSingleDraft);
+            singleModal.addEventListener('change', saveSingleDraft);
+        }
+        window.addEventListener('beforeunload', (e) => {
+            if (hasPlaneDraft() || hasEffDraft(currentEditingCatalog) || hasSingleDraft(singlePartMode, document.getElementById('sp-id')?.value)) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Limpiar resaltado de campos obligatorios al completarlos
+        document.addEventListener('input', e => {
+            const t = e.target;
+            if (t && t.classList && t.classList.contains('field-invalid') && String(t.value || '').trim()) {
+                t.classList.remove('field-invalid');
+            }
+        });
+        document.addEventListener('change', e => {
+            const t = e.target;
+            if (t && t.classList && t.classList.contains('field-invalid') && String(t.value || '').trim()) {
+                t.classList.remove('field-invalid');
+            }
+            // multiselect header: limpiar al seleccionar zona
+            if (t && t.type === 'checkbox' && t.closest('.multiselect-options')) {
+                const wrapper = t.closest('.custom-multiselect');
+                const header = wrapper ? wrapper.querySelector('.multiselect-header') : null;
+                if (header) header.classList.remove('field-invalid');
+                const areaSel = wrapper && wrapper.parentElement ? wrapper.parentElement.querySelector('.part-area') : null;
+                if (areaSel) areaSel.classList.remove('field-invalid');
             }
         });
 
@@ -2178,6 +2464,12 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('welcome-area').style.display = 'none';
             document.getElementById('main-plane-area').style.display = 'block';
             
+            // Re-renderizar SVG (y botones de zona) por si se perdieron al cambiar de avión
+            if (SVG_CACHE[currentSVGView]) {
+                if (typeof renderSvgDom === 'function') renderSvgDom();
+            } else {
+                loadPlaneSVG();
+            }
             renderPlaneData();
             updateAdminUI();
         }
@@ -2354,17 +2646,14 @@ window.adminToggleUsuario = function(user) {
             };
             
             const posInput = document.getElementById('sp-pos');
-            posInput.value = part.pos || '';
-            const zones = (part.pos || '').split(',').map(z => z.trim());
+            const zones = (part.pos || '').split(',').map(z => z.trim()).filter(Boolean);
+            posInput.value = zones.join(', ');
+            const area = areaForZones(zones);
+            const areaSelect = document.getElementById('sp-pos-area');
+            areaSelect.value = area;
             const optionsDiv = document.getElementById('sp-pos-options');
-            
-            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                cb.checked = zones.includes(cb.value);
-            });
-            
             const header = document.getElementById('sp-pos-header');
-            const headerText = zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS';
-            header.innerHTML = headerText + '<span style="font-size:8px; float:right;"> ▼</span>';
+            setZoneOptions(optionsDiv, posInput, header, area, zones);
 
             document.getElementById('sp-ata').value = part.ata || '';
             document.getElementById('sp-ipc').value = part.ipc || '';
@@ -2381,6 +2670,11 @@ window.adminToggleUsuario = function(user) {
             }
 
             document.getElementById('single-part-modal').style.display = 'block';
+            singlePartMode = 'edit';
+            const spDraftEdit = hasSingleDraft('edit', partId);
+            if (spDraftEdit) {
+                showConfirm('Hay un borrador sin guardar. ¿Restaurar?', () => applySingleDraft(spDraftEdit));
+            }
         }
 
         window.openAddCustomPartModal = function() {
@@ -2406,17 +2700,49 @@ window.adminToggleUsuario = function(user) {
                 checkPnMismatch(this, ata, ipc);
             };
             document.getElementById('sp-pos').value = '';
-            
+            document.getElementById('sp-pos-area').value = 'CABINA';
             const optionsDiv = document.getElementById('sp-pos-options');
-            optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
             const header = document.getElementById('sp-pos-header');
-            header.innerHTML = 'ZONAS<span style="font-size:8px; float:right;"> ▼</span>';
+            const hidden = document.getElementById('sp-pos');
+            setZoneOptions(optionsDiv, hidden, header, 'CABINA', []);
 
             document.getElementById('sp-ata').value = '';
             document.getElementById('sp-ipc').value = '';
 
             document.getElementById('btn-sp-revert').style.display = 'none'; 
+            singlePartMode = 'add';
             document.getElementById('single-part-modal').style.display = 'block';
+            const spDraftAdd = hasSingleDraft('add', null);
+            if (spDraftAdd) {
+                showConfirm('Hay un borrador sin guardar. ¿Restaurar?', () => applySingleDraft(spDraftAdd));
+            }
+        }
+
+        // Busca la pieza base del catálogo para un partId en el avión actual
+        function findBasePartForPlane(reg, partId) {
+            const plane = flotaDB[reg];
+            if (!plane) return null;
+            const appCode = (plane.appCode || '').trim();
+            if (!appCode || !isEffectivityStrictlyValid(appCode)) return null;
+            let found = null;
+            Object.values(efectividadesDB).forEach(catalog => {
+                if (catalog && catalog.parts && catalog.parts[partId]) {
+                    const p = catalog.parts[partId];
+                    if (isAppMatch(appCode, p.app, catalog.catalogCode)) {
+                        found = p;
+                    }
+                }
+            });
+            return found;
+        }
+
+        // Devuelve el componente del avión actual que ya usa el mismo P/N (excluyendo el indicado)
+        function findDuplicatePNInPlane(reg, pn, excludeId) {
+            const needle = (pn || '').trim().toUpperCase();
+            if (!needle || !reg) return null;
+            const parts = getMergedPlaneParts(reg);
+            if (!Array.isArray(parts)) return null;
+            return parts.find(p => p && (p.pn || '').trim().toUpperCase() === needle && p.id !== excludeId) || null;
         }
 
         window.saveSinglePart = function() {
@@ -2428,24 +2754,67 @@ window.adminToggleUsuario = function(user) {
             const ata = document.getElementById('sp-ata').value.trim().toUpperCase();
             const ipc = document.getElementById('sp-ipc').value.trim().toUpperCase();
 
+            // limpiar marcas previas
+            document.getElementById('sp-desc').classList.remove('field-invalid');
+            document.getElementById('sp-pn').classList.remove('field-invalid');
+            document.getElementById('sp-pos-area').classList.remove('field-invalid');
+            document.getElementById('sp-pos-header').classList.remove('field-invalid');
+            if (!desc) document.getElementById('sp-desc').classList.add('field-invalid');
+            if (!pn) document.getElementById('sp-pn').classList.add('field-invalid');
+            if (!pos) { document.getElementById('sp-pos-area').classList.add('field-invalid'); document.getElementById('sp-pos-header').classList.add('field-invalid'); }
             if (!desc || !pn) return alert("Descripción y P/N Actual son obligatorios.");
+            if (!pos) return alert("La zona es obligatoria.");
 
-            const plane = flotaDB[currentLoadedReg];
-            let exceptions = plane.exceptions || {};
-            
-            exceptions[partId] = {
-                ...(exceptions[partId] || {}),
-                desc, pn, pos, ata, ipc
-            };
+            const duplicate = findDuplicatePNInPlane(currentLoadedReg, pn, partId);
+            const doSave = () => {
+                const plane = flotaDB[currentLoadedReg];
+                const prevExceptions = plane.exceptions ? JSON.parse(JSON.stringify(plane.exceptions)) : null;
+                const prevVerif = (plane.verifications && plane.verifications[partId]) ? plane.verifications[partId] : null;
 
-            dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions`), exceptions).then(() => {
+                // Determinar si la pieza es base del catálogo
+                const basePart = findBasePartForPlane(currentLoadedReg, partId);
+                const isBase = !!basePart;
+                const sameAsBase = isBase && basePart.desc === desc && (basePart.pn || '') === pn && (basePart.pos || '') === pos && (basePart.ata || '') === ata && (basePart.ipc || '') === ipc;
+
                 const userName = displayNameFor(sessionUser()) || 'USUARIO';
                 const timestamp = `${get24hTimestamp()} | 👤 ${userName}`;
-                dbSet(ref(db, `pns_aviones/${currentLoadedReg}/verifications/${partId}`), timestamp).then(() => {
-                    closeModal('single-part-modal');
-                    showToast("✅ Componente Guardado y Verificado");
-                });
-            });
+
+                const finish = () => {
+                    dbSet(ref(db, `pns_aviones/${currentLoadedReg}/verifications/${partId}`), timestamp).then(() => {
+                        closeModal('single-part-modal');
+                        clearSingleDraft();
+                        showToast(`✅ Guardado: ${desc} (${pn})`, {
+                            undo: () => {
+                                dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions`), prevExceptions).then(() => {
+                                    dbSet(ref(db, `pns_aviones/${currentLoadedReg}/verifications/${partId}`), prevVerif).then(() => {
+                                        if (currentLoadedReg) renderPlaneData();
+                                        showToast("↩ Cambio deshecho");
+                                    });
+                                });
+                            }
+                        });
+                    });
+                };
+
+                if (isBase && sameAsBase) {
+                    // Vuelve al estándar: eliminar excepción
+                    dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions/${partId}`), null).then(finish);
+                } else {
+                    let exceptions = plane.exceptions ? JSON.parse(JSON.stringify(plane.exceptions)) : {};
+                    exceptions[partId] = {
+                        ...(exceptions[partId] || {}),
+                        desc, pn, pos, ata, ipc
+                    };
+                    dbSet(ref(db, `pns_aviones/${currentLoadedReg}/exceptions`), exceptions).then(finish);
+                }
+            };
+
+            if (duplicate) {
+                const msg = `⚠️ El P/N ${pn} ya existe en este avión${duplicate.desc ? ' (' + duplicate.desc + ')' : ''}.\n¿Desea guardarlo de todos modos?`;
+                showConfirm(msg, doSave);
+                return;
+            }
+            doSave();
         }
 
         window.revertSinglePart = function() {
@@ -2534,11 +2903,34 @@ window.adminToggleUsuario = function(user) {
             }
             document.getElementById('eff-components-area').style.display = 'block';
             document.getElementById('display-catalog-name').innerText = "CATÁLOGO ACTIVO: " + code;
+            const effDraft = hasEffDraft(code);
+            if (effDraft) {
+                showConfirm('Hay un borrador sin guardar para este catálogo. ¿Restaurar?', () => applyEffDraft(effDraft));
+            }
         }
 
         window.saveEfectividadData = function() {
             if(!currentEditingCatalog) return;
+            const code = currentEditingCatalog;
+            const prevCatalog = efectividadesDB[code] ? JSON.parse(JSON.stringify(efectividadesDB[code])) : null;
             const rows = document.getElementById('eff-components-container').querySelectorAll('.component-row-wrapper');
+            rows.forEach(row => { row.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid')); });
+            let missingZone = false;
+            rows.forEach(row => {
+                const d = row.querySelector('.part-desc')?.value.trim();
+                const p = row.querySelector('.part-pn')?.value.trim();
+                const z = row.querySelector('.part-pos')?.value.trim();
+                if (d && p && !z) {
+                    missingZone = true;
+                    const areaSel = row.querySelector('.part-area');
+                    const header = row.querySelector('.multiselect-header');
+                    if (areaSel) areaSel.classList.add('field-invalid');
+                    if (header) header.classList.add('field-invalid');
+                }
+                if ((d || p || z) && !d) row.querySelector('.part-desc')?.classList.add('field-invalid');
+                if ((d || p || z) && !p) row.querySelector('.part-pn')?.classList.add('field-invalid');
+            });
+            if (missingZone) { alert("La zona es obligatoria para cada componente."); return; }
             let partsData = {};
             
             rows.forEach(row => {
@@ -2556,8 +2948,16 @@ window.adminToggleUsuario = function(user) {
                 }
             });
             
-            dbSet(ref(db, `efectividades/${currentEditingCatalog}`), { catalogCode: currentEditingCatalog, parts: partsData }).then(() => {
-                showToast("Catálogo Guardado");
+            dbSet(ref(db, `efectividades/${code}`), { catalogCode: code, parts: partsData }).then(() => {
+                clearEffDraft(code);
+                showToast(`✅ Guardado: catálogo ${code}`, {
+                    undo: () => {
+                        dbSet(ref(db, `efectividades/${code}`), prevCatalog).then(() => {
+                            if (currentLoadedReg) loadSelectedPlane();
+                            showToast("↩ Cambio deshecho");
+                        });
+                    }
+                });
                 closeModal('eff-modal');
                 if(currentLoadedReg) loadSelectedPlane(); 
             });
@@ -2637,9 +3037,10 @@ window.adminToggleUsuario = function(user) {
             row.dataset.id = id; row.dataset.isBase = isBase; row.dataset.status = status;
             if(catalogSource) row.dataset.catalogSource = catalogSource;
             
-            const zones = (pos || '').split(',').map(z => z.trim());
-            const isChecked = (val) => zones.includes(val) ? 'checked' : '';
-            const headerText = zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS';
+            const zones = (pos || '').split(',').map(z => z.trim()).filter(Boolean);
+            const area = areaForZones(zones);
+            const headerText = zones.length ? zones.join(', ') : 'ZONAS';
+            const zoneChecks = zoneListForArea(area).map(z => `<label><input type="checkbox" value="${escapeAttr(z)}" onchange="updateMultiValue(this)" ${zones.includes(z)?'checked':''}> ${escapeHtml(z)}</label>`).join('');
 
             let overrideHtml = '';
             const isPlaneModal = containerId === 'plane-components-container';
@@ -2662,20 +3063,17 @@ window.adminToggleUsuario = function(user) {
                     <input type="text" class="part-desc col-desc" placeholder="DESC" list="descripciones-list" value="${escapeAttr(desc)}">
                     <input type="text" class="part-pn col-pn" placeholder="P/N" list="pn-list" value="${escapeAttr(pn)}">
                     
-                    <div class="custom-multiselect col-pos">
-                        <div class="multiselect-header" onclick="toggleMulti(this)">${escapeHtml(headerText)}<span style="font-size:8px; float:right;"> ▼</span></div>
-                        <div class="multiselect-options">
-                            <label><input type="checkbox" value="FWD" onchange="updateMultiValue(this)" ${isChecked('FWD')}> FWD</label>
-                            <label><input type="checkbox" value="AFT" onchange="updateMultiValue(this)" ${isChecked('AFT')}> AFT</label>
-                            <label><input type="checkbox" value="MCD CENTRAL" onchange="updateMultiValue(this)" ${isChecked('MCD CENTRAL')}> MCD CENTRAL</label>
-                            <label><input type="checkbox" value="MCD LH" onchange="updateMultiValue(this)" ${isChecked('MCD LH')}> MCD LH</label>
-                            <label><input type="checkbox" value="MCD RH" onchange="updateMultiValue(this)" ${isChecked('MCD RH')}> MCD RH</label>
-                            <label><input type="checkbox" value="CAPTAIN SEAT" onchange="updateMultiValue(this)" ${isChecked('CAPTAIN SEAT')}> CAPTAIN SEAT</label>
-                            <label><input type="checkbox" value="F/O SEAT" onchange="updateMultiValue(this)" ${isChecked('F/O SEAT')}> F/O SEAT</label>
-                            <label><input type="checkbox" value="3RD OCCUPANT SEAT" onchange="updateMultiValue(this)" ${isChecked('3RD OCCUPANT SEAT')}> 3RD OCCUPANT SEAT</label>
-                            <label><input type="checkbox" value="4TH OCCUPANT SEAT" onchange="updateMultiValue(this)" ${isChecked('4TH OCCUPANT SEAT')}> 4TH OCCUPANT SEAT</label>
+                    <div class="zone-cascade col-pos" style="display:flex; flex-direction:column; gap:4px; align-items:stretch;">
+                        <select class="part-area" onchange="onAreaCascadeChange(this)" style="width:100%; height:28px; font-size:9px;">
+                            <option value="CABINA" ${area==='CABINA'?'selected':''}>CABINA</option>
+                            <option value="COCKPIT" ${area==='COCKPIT'?'selected':''}>COCKPIT</option>
+                            <option value="TODAS" ${area==='TODAS'?'selected':''}>TODAS</option>
+                        </select>
+                        <div class="custom-multiselect" style="width:100%;">
+                            <div class="multiselect-header" onclick="toggleMulti(this)">${escapeHtml(headerText)}<span style="font-size:8px; float:right;"> ▼</span></div>
+                            <div class="multiselect-options">${zoneChecks}</div>
+                            <input type="hidden" class="part-pos" value="${escapeAttr(pos)}">
                         </div>
-                        <input type="hidden" class="part-pos" value="${escapeAttr(pos)}">
                     </div>
                     
                     <input type="text" class="part-ata col-ata" placeholder="CMM" list="ata-list" value="${escapeAttr(ata)}">
@@ -2743,15 +3141,16 @@ window.adminToggleUsuario = function(user) {
             if (basePart) {
                 row.querySelector('.part-desc').value = basePart.desc || '';
                 row.querySelector('.part-pn').value = basePart.pn || '';
-                row.querySelector('.part-pos').value = basePart.pos || '';
-                
                 const posStr = basePart.pos || '';
-                const zones = posStr.split(',').map(z => z.trim());
-                row.querySelectorAll('.multiselect-options input[type="checkbox"]').forEach(cb => {
-                    cb.checked = zones.includes(cb.value);
-                });
+                const zones = posStr.split(',').map(z => z.trim()).filter(Boolean);
+                const area = areaForZones(zones);
+                const areaSelect = row.querySelector('.part-area');
+                if (areaSelect) areaSelect.value = area;
+                const hidden = row.querySelector('.part-pos');
+                const optionsDiv = row.querySelector('.multiselect-options');
                 const header = row.querySelector('.multiselect-header');
-                header.innerHTML = (zones.filter(Boolean).length ? zones.join(', ') : 'ZONAS') + '<span style="font-size:8px; float:right;"> ▼</span>';
+                hidden.value = zones.join(', ');
+                setZoneOptions(optionsDiv, hidden, header, area, zones);
 
                 row.querySelector('.part-ata').value = basePart.ata || '';
                 row.querySelector('.part-ipc').value = basePart.ipc || '';
@@ -2814,7 +3213,35 @@ window.adminToggleUsuario = function(user) {
             let appCode = document.getElementById('modal-plane-appcode').value.trim().replace(/\D/g,'');
             if(appCode) appCode = appCode.padStart(3,'0'); else appCode = '';
             const rows = document.getElementById('plane-components-container').querySelectorAll('.component-row-wrapper');
-            
+
+            // Validación de P/N duplicado dentro del avión
+            const pnCounts = {};
+            rows.forEach(row => {
+                const pn = row.querySelector('.part-pn')?.value.trim().toUpperCase();
+                if (pn) pnCounts[pn] = (pnCounts[pn] || 0) + 1;
+            });
+            const duplicatePns = Object.keys(pnCounts).filter(pn => pnCounts[pn] > 1);
+
+            rows.forEach(row => { row.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid')); });
+            let missingZone = false;
+            rows.forEach(row => {
+                const d = row.querySelector('.part-desc')?.value.trim();
+                const p = row.querySelector('.part-pn')?.value.trim();
+                const z = row.querySelector('.part-pos')?.value.trim();
+                if (d && p && !z) {
+                    missingZone = true;
+                    const areaSel = row.querySelector('.part-area');
+                    const header = row.querySelector('.multiselect-header');
+                    if (areaSel) areaSel.classList.add('field-invalid');
+                    if (header) header.classList.add('field-invalid');
+                }
+                if ((d || p || z) && !d) row.querySelector('.part-desc')?.classList.add('field-invalid');
+                if ((d || p || z) && !p) row.querySelector('.part-pn')?.classList.add('field-invalid');
+            });
+            if (missingZone) { alert("La zona es obligatoria para cada componente."); return; }
+
+            const performSave = () => {
+            const prevPlane = flotaDB[reg] ? JSON.parse(JSON.stringify(flotaDB[reg])) : null;
             let exceptions = {};
             let expectedBaseParts = {};
             
@@ -2867,8 +3294,17 @@ window.adminToggleUsuario = function(user) {
                 closeModal('avion-modal');
                 document.getElementById('plane-select').value = reg;
                 loadSelectedPlane(); 
-                showToast("Avión Guardado Correctamente");
+                clearPlaneDraft();
+                showToast(`✅ Guardado: avión ${reg}`, { undo: () => { dbSet(ref(db, `pns_aviones/${reg}`), prevPlane).then(() => { if (prevPlane === null) { if (currentLoadedReg === reg) resetView(); } else { document.getElementById('plane-select').value = reg; loadSelectedPlane(); } showToast("↩ Cambio deshecho"); }); } });
             });
+            };
+
+            if (duplicatePns.length) {
+                const msg = `⚠️ Se detectaron P/N duplicados en este avión:\n${duplicatePns.join('\\n')}\n¿Desea guardar de todos modos?`;
+                showConfirm(msg, performSave);
+                return;
+            }
+            performSave();
         }
 
         window.openPlaneModal = function(isEdit = false) {
@@ -2902,7 +3338,12 @@ window.adminToggleUsuario = function(user) {
                 addComponentRow('plane-components-container', generateId(), false, 'custom', '', '', '', '', '', '', null);
             }
             document.getElementById('modal-title').innerText = isEdit ? `✏️ EDITAR ${currentLoadedReg}` : '✈️ AGREGAR AVIÓN';
+            const draftReg = document.getElementById('modal-plane-reg').value.trim().toUpperCase();
+            const planeDraft = hasPlaneDraft(draftReg || null);
             document.getElementById('avion-modal').style.display = 'block';
+            if (planeDraft) {
+                showConfirm('Hay un borrador sin guardar para este avión. ¿Restaurar?', () => applyPlaneDraft(planeDraft));
+            }
         }
 
         window.deleteAvion = function() {
@@ -2922,5 +3363,13 @@ window.adminToggleUsuario = function(user) {
         window.closeModal = function(modalId) { document.getElementById(modalId).style.display = 'none'; }
         window.toggleMode = toggleMode;
     </script>
+<!-- PWA: registra el service worker -->
+<script>
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+        navigator.serviceWorker.register('sw.js').catch(function (err) {
+            console.warn('PWA: no se pudo registrar el service worker', err);
+        });
+    }
+</script>
 </body>
 </html>
