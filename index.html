@@ -117,7 +117,7 @@
         .multiselect-options label:hover { background: var(--light-gray); }
         .multiselect-options input[type="checkbox"] { height: 14px; width: 14px !important; margin: 0; cursor: pointer; flex-shrink: 0; }
 
-        .container { max-width: 1000px; margin: 0 auto; background: var(--surface); padding: 25px; border-radius: 24px 0 24px 0; box-shadow: 0 4px 12px color-mix(in srgb, var(--black) 5%, transparent); }
+        .container { max-width: 1440px; margin: 0 auto; background: var(--surface); padding: 25px; border-radius: 24px 0 24px 0; box-shadow: 0 4px 12px color-mix(in srgb, var(--black) 5%, transparent); }
 
         /* Barra superior general */
         .top-bar {
@@ -202,20 +202,43 @@
             border-color: var(--primary) !important; box-shadow: 0 4px 6px color-mix(in srgb, var(--primary) 20%, transparent); 
         }
 
+        /* Botones de zona (alternativa al SVG) */
+        .svg-hitarea {
+            fill: transparent;
+            stroke: none;
+            pointer-events: all;
+            cursor: pointer;
+        }
+        .zone-buttons { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 8px; align-items: center; }
+        .zone-sep { width: 1px; height: 18px; background: var(--border); margin: 0 2px; flex: 0 0 auto; }
+        .zone-btn {
+            height: var(--button-height); font-size: 9px; padding: 0 10px; border-radius: var(--button-radius);
+            border: 1px solid var(--border); background: var(--surface); color: var(--primary);
+            font-weight: 800; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+        }
+        .zone-btn:hover { border-color: var(--primary); background: var(--light-gray); }
+        .zone-btn.active {
+            background: var(--accent); color: var(--surface); border-color: var(--accent);
+            box-shadow: 0 4px 6px color-mix(in srgb, var(--accent) 30%, transparent);
+        }
+
         .svg-group { cursor: pointer; transition: all 0.2s ease; }
         
         .svg-clickable { 
             transition: all 0.2s ease; 
             stroke: transparent;
-            stroke-width: 15px; 
+            stroke-width: 25px; 
             pointer-events: all;
         }
-        .svg-group:hover .svg-clickable { stroke: var(--primary) !important; stroke-width: 3px !important; }
+        .svg-group:hover .svg-clickable { stroke: var(--primary) !important; stroke-width: 3px !important; vector-effect: non-scaling-stroke !important; }
+        .svg-group.zone-hover .svg-clickable { stroke: var(--primary) !important; stroke-width: 3px !important; vector-effect: non-scaling-stroke !important; }
         .svg-group.active-zone .svg-clickable { 
-            fill: color-mix(in srgb, var(--accent) 10%, transparent) !important; 
+            fill: rgba(238, 23, 80, 0.1) !important; 
             stroke: var(--accent) !important; 
             stroke-width: 6px !important; 
             opacity: 1 !important;
+            vector-effect: non-scaling-stroke !important;
         }
 
         button { 
@@ -439,6 +462,9 @@
             .admin-modal-footer button { width: auto; }
             .override-controls { flex-direction: column; align-items: stretch; }
             .override-controls button { width: 100%; }
+            #plane-actions-bar { flex-direction: column; align-items: stretch; }
+            #plane-warning-text { max-width: 100%; margin-right: 0; }
+            #plane-actions-bar .btn-leader { width: 100%; }
         }
 
         button {
@@ -556,12 +582,14 @@
                 <div id="plane-svg-wrapper" style="width: 100%; display: flex; justify-content: center; align-items: center; min-height: 150px; flex-direction: column;">
                     <span style="color: var(--primary); font-weight: bold; font-size: 10px;">Cargando DWG... ✈️</span>
                 </div>
+                <div id="zone-buttons" class="zone-buttons"></div>
             </div>
             
             <div id="zone-filter-alert"></div>
             
-            <div id="plane-actions-bar" class="leader-only tech-only" style="display: none; justify-content: flex-end; margin-bottom: 10px;">
-                <button class="btn-leader" onclick="openAddCustomPartModal()">➕ AÑADIR COMPONENTE (SOLO ESTE AVIÓN)</button>
+            <div id="plane-actions-bar" style="display: none; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 20px; flex-wrap: wrap;">
+                <span id="plane-warning-text" style="color: var(--danger); font-weight: bold; font-size: 10px; text-align: left; flex: 0 0 auto; margin-right: 10px; max-width: 50%;"></span>
+                <button class="btn-leader leader-only tech-only" onclick="openAddCustomPartModal()" style="flex: 0 0 auto;">➕ AÑADIR COMPONENTE (SOLO ESTE AVIÓN)</button>
             </div>
             
             <div class="pn-grid" id="pn-grid-container"></div>
@@ -993,6 +1021,18 @@ function isLeaderOrAdmin(u) {
             { name: '4TH OCCUPANT SEAT', id: '4TH_OCCUPANT' }
         ];
 
+        // Zonas pertenecientes a cada vista (filtro de componentes)
+        const VIEW_ZONES = {
+            'CABINA': ['FWD', 'AFT', 'MCD CENTRAL', 'MCD LH', 'MCD RH'],
+            'COCKPIT': ['CAPTAIN SEAT', 'F/O SEAT', '3RD OCCUPANT SEAT', '4TH OCCUPANT SEAT']
+        };
+        function partInView(part, view) {
+            const zones = VIEW_ZONES[view] || [];
+            const pos = (part && part.pos ? part.pos : '').toUpperCase();
+            if (!pos || pos === '-') return true; // sin ubicación: se muestra en ambas
+            return zones.some(z => pos.includes(z.toUpperCase()));
+        }
+
         // B5 FIX: 100% único - antes Math.random podía repetir, ahora usa timestamp + crypto
         const generateId = () => 'p_' + Date.now().toString(36) + '_' + (crypto.randomUUID ? crypto.randomUUID().slice(0,8) : Math.random().toString(36).substr(2,9));
         
@@ -1057,6 +1097,82 @@ function isLeaderOrAdmin(u) {
             }
         };
 
+        function lookupPartByPN(pn) {
+            if (!pn) return null;
+            const needle = pn.trim().toUpperCase();
+            // Buscar en catálogos de efectividad
+            for (const code in efectividadesDB) {
+                const cat = efectividadesDB[code];
+                if (cat && cat.parts) {
+                    for (const pid in cat.parts) {
+                        const p = cat.parts[pid];
+                        if (p && (p.pn || '').trim().toUpperCase() === needle) {
+                            return { ata: p.ata || '', ipc: p.ipc || '', pos: p.pos || '', desc: p.desc || '' };
+                        }
+                    }
+                }
+            }
+            // Buscar en excepciones de aviones
+            for (const reg in flotaDB) {
+                const plane = flotaDB[reg];
+                if (plane && plane.exceptions) {
+                    for (const pid in plane.exceptions) {
+                        const e = plane.exceptions[pid];
+                        if (e && (e.pn || '').trim().toUpperCase() === needle) {
+                            return { ata: e.ata || '', ipc: e.ipc || '', pos: e.pos || '', desc: e.desc || '' };
+                        }
+                    }
+                }
+                // También en parts legacy
+                if (plane && Array.isArray(plane.parts)) {
+                    for (const p of plane.parts) {
+                        if (p && (p.pn || '').trim().toUpperCase() === needle) {
+                            return { ata: p.ata || '', ipc: p.ipc || '', pos: p.pos || '', desc: p.desc || '' };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        function updatePartInDB(pn, newAta, newIpc) {
+            if (!pn) return;
+            const needle = pn.trim().toUpperCase();
+            // Catálogos de efectividad
+            for (const code in efectividadesDB) {
+                const cat = efectividadesDB[code];
+                if (cat && cat.parts) {
+                    for (const pid in cat.parts) {
+                        const p = cat.parts[pid];
+                        if (p && (p.pn || '').trim().toUpperCase() === needle) {
+                            if (newAta) { p.ata = newAta; dbSet(ref(db, `efectividades/${code}/parts/${pid}/ata`), newAta); }
+                            if (newIpc) { p.ipc = newIpc; dbSet(ref(db, `efectividades/${code}/parts/${pid}/ipc`), newIpc); }
+                        }
+                    }
+                }
+            }
+            // Excepciones de aviones
+            for (const reg in flotaDB) {
+                const plane = flotaDB[reg];
+                if (plane && plane.exceptions) {
+                    for (const pid in plane.exceptions) {
+                        const e = plane.exceptions[pid];
+                        if (e && (e.pn || '').trim().toUpperCase() === needle) {
+                            if (newAta) { e.ata = newAta; dbSet(ref(db, `pns_aviones/${reg}/exceptions/${pid}/ata`), newAta); }
+                            if (newIpc) { e.ipc = newIpc; dbSet(ref(db, `pns_aviones/${reg}/exceptions/${pid}/ipc`), newIpc); }
+                        }
+                    }
+                }
+                if (plane && Array.isArray(plane.parts)) {
+                    plane.parts.forEach((p, idx) => {
+                        if (p && (p.pn || '').trim().toUpperCase() === needle) {
+                            if (newAta) { p.ata = newAta; dbSet(ref(db, `pns_aviones/${reg}/parts/${idx}/ata`), newAta); }
+                            if (newIpc) { p.ipc = newIpc; dbSet(ref(db, `pns_aviones/${reg}/parts/${idx}/ipc`), newIpc); }
+                        }
+                    });
+                }
+            }
+            showToast('✅ Base de datos actualizada');
+        }
         function get24hTimestamp() {
             const now = new Date();
             const dd = String(now.getDate()).padStart(2, '0');
@@ -1066,6 +1182,44 @@ function isLeaderOrAdmin(u) {
             const min = String(now.getMinutes()).padStart(2, '0');
             return `${dd}/${mm}/${yy} ${hh}:${min}`;
         }
+
+        function checkPnMismatch(pnInput, ataInput, ipcInput) {
+            const pn = (pnInput.value || '').trim().toUpperCase();
+            if (!pn) return;
+            const found = lookupPartByPN(pn);
+            if (!found) return;
+            const curAta = (ataInput.value || '').trim().toUpperCase();
+            const curIpc = (ipcInput.value || '').trim().toUpperCase();
+            const dbAta = (found.ata || '').trim().toUpperCase();
+            const dbIpc = (found.ipc || '').trim().toUpperCase();
+            const ataDiff = curAta && dbAta && curAta !== dbAta;
+            // El IPC puede variar legítimamente (un P/N puede aparecer en varios IPC/IPD),
+            // así que solo se verifica/actualiza el CMM.
+            const ipcDiff = false;
+            if (!ataDiff) return;
+            const key = `${pn}|${curAta}|${curIpc}`;
+            if (pnInput.dataset.lastMismatch === key) return;
+            pnInput.dataset.lastMismatch = key;
+            const msg = `El P/N ${pn} tiene en BD:\nCMM: ${dbAta || '-'}\nIPC: ${dbIpc || '-'}\n\nIngresaste:\nCMM: ${curAta || '-'}\nIPC: ${curIpc || '-'}\n\nEl CMM no puede variar para un mismo P/N.\n¿Actualizar el CMM en la base de datos? (el IPC puede variar y no se modificará)`;
+            showConfirm(msg, () => {
+                // Requerir ingreso manual para evitar cambios accidentales
+                const typedAta = (ataDiff) ? window.prompt(`Para confirmar, escriba el nuevo CMM (${curAta}) tal cual:`) : null;
+                if (ataDiff && typedAta !== curAta) { showToast('⚠️ Actualización cancelada (CMM no coincide)'); return; }
+                const typedIpc = (ipcDiff) ? window.prompt(`Para confirmar, escriba el nuevo IPC (${curIpc}) tal cual:`) : null;
+                if (ipcDiff && typedIpc !== curIpc) { showToast('⚠️ Actualización cancelada (IPC no coincide)'); return; }
+                if (ataDiff) updatePartInDB(pn, curAta, null);
+                if (ipcDiff) updatePartInDB(pn, null, curIpc);
+            });
+        }
+
+        // Adjuntar verificación de mismatch en los campos CMM/IPC del modal individual
+        (function attachSpMismatch() {
+            const ata = document.getElementById('sp-ata');
+            const ipc = document.getElementById('sp-ipc');
+            const pn = document.getElementById('sp-pn');
+            if (ata) ata.addEventListener('blur', () => { if (pn) checkPnMismatch(pn, ata, ipc); });
+            if (ipc) ipc.addEventListener('blur', () => { if (pn) checkPnMismatch(pn, ata, ipc); });
+        })();
 
         window.verifyPart = function(partId) {
             if (!currentLoadedReg) return;
@@ -1117,65 +1271,162 @@ function isLeaderOrAdmin(u) {
         window.switchSVG = function(view) {
             if (currentSVGView === view) return;
             currentSVGView = view;
+            currentZoneFilter = null;
             
             document.getElementById('btn-cabina').classList.toggle('active', view === 'CABINA');
             document.getElementById('btn-cockpit').classList.toggle('active', view === 'COCKPIT');
             
             loadPlaneSVG();
+            if (typeof renderPlaneData === 'function' && currentLoadedReg) renderPlaneData();
         };
+
+        const SVG_CACHE = {};
 
         async function loadPlaneSVG() {
             try {
                 const wrapper = document.getElementById('plane-svg-wrapper');
                 wrapper.innerHTML = `<span style="color: var(--primary); font-weight: bold; font-size: 10px;">Cargando DWG ${currentSVGView}... ✈️</span>`;
-                
-                const response = await fetch(SVG_URLS[currentSVGView]);
-                if (!response.ok) throw new Error("SVG Network error");
-                const svgText = await response.text();
-                
-                wrapper.innerHTML = svgText;
-                const svgElement = wrapper.querySelector('svg');
-                if(svgElement) {
-                    svgElement.style.width = '100%'; svgElement.style.height = 'auto'; svgElement.style.maxHeight = '300px'; 
-                }
-                
-                ZONES_MAP.forEach(z => {
-                    const btn = document.getElementById(z.id) || document.getElementById(`btn-${z.name.toLowerCase().replace(/ /g, '-')}`);
-                    if (btn) {
-                        btn.classList.add('svg-group');
-                        btn.onclick = () => toggleZoneFilter(z.name);
-                        btn.querySelectorAll('path, rect, polygon, circle, g').forEach(p => p.classList.add('svg-clickable'));
-                    }
-                });
 
-                if (currentZoneFilter) {
-                    const activeZoneObj = ZONES_MAP.find(z => z.name === currentZoneFilter);
-                    if (activeZoneObj) {
-                        const btn = document.getElementById(activeZoneObj.id);
-                        if (btn) btn.classList.add('active-zone');
-                    }
+                if (!SVG_CACHE[currentSVGView]) {
+                    const response = await fetch(SVG_URLS[currentSVGView]);
+                    if (!response.ok) throw new Error("SVG Network error");
+                    SVG_CACHE[currentSVGView] = await response.text();
                 }
+                renderSvgDom();
             } catch (error) {
                 document.getElementById('plane-svg-wrapper').innerHTML = `<div style="color: var(--danger); font-weight: bold; padding: 20px;">Error al cargar esquema ${currentSVGView}.</div>`;
             }
         }
+
+        function renderSvgDom() {
+            const wrapper = document.getElementById('plane-svg-wrapper');
+            const svgText = SVG_CACHE[currentSVGView];
+            if (!svgText || !wrapper) return;
+
+            // Re-parsear desde caché fuerza un repintado completo (evita fantasmas en Safari).
+            wrapper.innerHTML = svgText;
+            const svgElement = wrapper.querySelector('svg');
+            if (svgElement) {
+                svgElement.style.width = '100%';
+                svgElement.style.height = 'auto';
+                svgElement.style.maxHeight = '300px';
+            }
+
+            const foundZones = [];
+            ZONES_MAP.forEach(z => {
+                const btn = document.getElementById(z.id) || document.getElementById(`btn-${z.name.toLowerCase().replace(/ /g, '-')}`);
+                if (btn) {
+                    btn.classList.add('svg-group');
+                    btn.onclick = () => toggleZoneFilter(z.name);
+                    btn.querySelectorAll('path, rect, polygon, circle, g').forEach(p => p.classList.add('svg-clickable'));
+                    // Área de clic ampliada (hitbox invisible) para facilitar la selección.
+                    try {
+                        const bb = btn.getBBox();
+                        const padX = 12;
+                        const padY = 2;
+                        const ns = 'http://www.w3.org/2000/svg';
+                        const hit = document.createElementNS(ns, 'rect');
+                        hit.setAttribute('x', bb.x - padX);
+                        hit.setAttribute('y', bb.y - padY);
+                        hit.setAttribute('width', Math.max(bb.width + padX * 2, 12));
+                        hit.setAttribute('height', Math.max(bb.height + padY * 2, 4));
+                        hit.setAttribute('class', 'svg-hitarea');
+                        btn.appendChild(hit);
+                    } catch (e) { /* noop */ }
+                    foundZones.push(z.name);
+                }
+            });
+
+            renderZoneButtons(foundZones);
+
+            if (currentZoneFilter) {
+                const activeZoneObj = ZONES_MAP.find(z => z.name === currentZoneFilter);
+                if (activeZoneObj) {
+                    const btn = document.getElementById(activeZoneObj.id);
+                    if (btn) {
+                        btn.classList.add('active-zone');
+                        btn.querySelectorAll('.svg-clickable').forEach(p => p.setAttribute('vector-effect', 'non-scaling-stroke'));
+                    }
+                }
+            }
+            document.querySelectorAll('.zone-btn').forEach(b => b.classList.toggle('active', b.textContent === currentZoneFilter));
+            forceSvgRepaint();
+        }
         loadPlaneSVG();
+
+        function forceSvgRepaint() {
+            const wrapper = document.getElementById('plane-svg-wrapper');
+            const target = (wrapper && wrapper.querySelector('svg')) || wrapper;
+            if (!target) return;
+            // WebKit/Safari a veces no invalida el repintado al quitar clases/atributos SVG.
+            // Forzamos un reflow + un cambio de estilo inocuo para disparar el repaint.
+            try {
+                target.style.transform = 'translateZ(0)';
+                void target.getBoundingClientRect();
+                void target.offsetHeight;
+                requestAnimationFrame(() => {
+                    target.style.transform = '';
+                    void target.getBoundingClientRect();
+                });
+            } catch (e) { /* noop */ }
+        }
+
+        function renderZoneButtons(zones) {
+            const container = document.getElementById('zone-buttons');
+            if (!container) return;
+            container.innerHTML = '';
+            const found = new Set(zones || []);
+            // Orden deseado por vista, con separadores visuales.
+            const order = currentSVGView === 'COCKPIT'
+                ? ['CAPTAIN SEAT', 'F/O SEAT', '|', '3RD OCCUPANT SEAT', '4TH OCCUPANT SEAT']
+                : ['FWD', '|', 'MCD LH', 'MCD CENTRAL', 'MCD RH', '|', 'AFT'];
+
+            order.forEach(item => {
+                if (item === '|') {
+                    const sep = document.createElement('span');
+                    sep.className = 'zone-sep';
+                    container.appendChild(sep);
+                    return;
+                }
+                if (!found.has(item)) return;
+
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'zone-btn' + (currentZoneFilter === item ? ' active' : '');
+                b.textContent = item;
+                b.onclick = () => toggleZoneFilter(item);
+                const zoneObj = ZONES_MAP.find(z => z.name === item);
+                const svgEl = zoneObj && (document.getElementById(zoneObj.id) || document.getElementById(`btn-${zoneObj.name.toLowerCase().replace(/ /g, '-')}`));
+                if (svgEl) {
+                    b.onmouseenter = () => {
+                        svgEl.classList.add('zone-hover');
+                        svgEl.querySelectorAll('.svg-clickable').forEach(p => p.setAttribute('vector-effect', 'non-scaling-stroke'));
+                    };
+                    b.onmouseleave = () => {
+                        svgEl.classList.remove('zone-hover');
+                        if (!svgEl.classList.contains('active-zone')) {
+                            svgEl.querySelectorAll('.svg-clickable').forEach(p => p.removeAttribute('vector-effect'));
+                        }
+                    };
+                }
+                container.appendChild(b);
+            });
+        }
 
         window.toggleZoneFilter = function(zone) {
             if (!currentLoadedReg) return;
             
-            document.querySelectorAll('.svg-group').forEach(g => g.classList.remove('active-zone'));
-            
-            if (currentZoneFilter === zone) { 
-                currentZoneFilter = null; 
-            } else { 
-                currentZoneFilter = zone; 
-                const activeZoneObj = ZONES_MAP.find(z => z.name === zone);
-                if (activeZoneObj) {
-                    const btn = document.getElementById(activeZoneObj.id) || document.getElementById(`btn-${activeZoneObj.name.toLowerCase().replace(/ /g, '-')}`);
-                    if (btn) btn.classList.add('active-zone');
-                }
+            if (currentZoneFilter === zone) {
+                currentZoneFilter = null;
+            } else {
+                currentZoneFilter = zone;
             }
+
+            // Re-renderizar el SVG desde caché fuerza un repintado completo y evita
+            // fantasmas/incompletos en Safari al des-resaltar.
+            renderSvgDom();
+
+            document.querySelectorAll('.zone-btn').forEach(b => b.classList.toggle('active', b.textContent === currentZoneFilter));
             renderPlaneData();
         }
 
@@ -1509,7 +1760,7 @@ function isAuthorizedUser(u) {
     if (selectorActions) selectorActions.style.display = showNewPlane ? 'flex' : 'none';
     if (btnNewPlane) btnNewPlane.style.display = showNewPlane ? 'inline-flex' : 'none';
     
-    if (planeActionsBar) planeActionsBar.style.display = ((isTeamLeader && isLeader) || isAuthorizedUser(currentUser)) ? 'flex' : 'none';
+    if (planeActionsBar) planeActionsBar.style.display = currentLoadedReg ? 'flex' : 'none';
     
     // ↺ Revertir excepcion/pieza custom: TL, admin o tech
     const btnSpRevert = document.getElementById('btn-sp-revert');
@@ -1920,7 +2171,9 @@ window.adminToggleUsuario = function(user) {
             }
             
             currentLoadedReg = reg; currentZoneFilter = null; 
-            document.querySelectorAll('.svg-group').forEach(g => g.classList.remove('active-zone'));
+            document.querySelectorAll('.svg-group').forEach(g => { g.classList.remove('active-zone'); g.classList.remove('zone-hover'); g.querySelectorAll('.svg-clickable').forEach(p => p.removeAttribute('vector-effect')); });
+            document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
+            forceSvgRepaint();
             localStorage.setItem('saved_plane_reg', reg);
             document.getElementById('welcome-area').style.display = 'none';
             document.getElementById('main-plane-area').style.display = 'block';
@@ -1950,25 +2203,30 @@ window.adminToggleUsuario = function(user) {
             container.innerHTML = '';
 
             let parts = getMergedPlaneParts(currentLoadedReg);
-            let warningHtml = '';
-            const verifications = plane.verifications || {};
-            
-            if (parts._invalidEffectivity) {
-                warningHtml = `
-                    <div style="grid-column: 1/-1;" class="no-results">
-                        <span style="color:var(--danger); font-size:1.2em; font-weight:800;">⚠️ EFECTIVIDAD "${plane.appCode}" NO ES RECONOCIDA EN EL CATÁLOGO</span><br><br>
-                        Esta efectividad no está explícitamente autorizada. No se ha cargado ninguna pieza.
-                    </div>
-                `;
+            const _invalid = !!(parts && parts._invalidEffectivity);
+            if (Array.isArray(parts)) {
+                const filtered = parts.filter(p => partInView(p, currentSVGView));
+                if (_invalid) filtered._invalidEffectivity = true;
+                parts = filtered;
             }
-
-            if (currentZoneFilter && Array.isArray(parts)) {
+            const verifications = plane.verifications || {};
+            const isInvalidEff = !!(parts && parts._invalidEffectivity);
+            
+            if (isInvalidEff) {
+                const warningEl = document.getElementById('plane-warning-text');
+                if (warningEl) warningEl.textContent = `⚠️ EFECTIVIDAD "${plane.appCode}" NO ES RECONOCIDA EN EL CATÁLOGO  ·  ESTA EFECTIVIDAD NO ESTÁ EXPLÍCITAMENTE AUTORIZADA. NO SE HA CARGADO NINGUNA PIEZA.`;
+                alertZoneEl.innerHTML = '';
+            } else if (currentZoneFilter && Array.isArray(parts)) {
+                const warningEl = document.getElementById('plane-warning-text');
+                if (warningEl) warningEl.textContent = '';
                 alertZoneEl.innerHTML = `<div style="background: var(--light-gray); padding: 8px 12px; border-radius: 4px; font-weight: bold; color: var(--accent); border: 1px solid var(--border); margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size: 10px;">
                     <span>🔍 FILTRO DE ZONA ACTIVO: ${currentZoneFilter}</span>
                     <button onclick="toggleZoneFilter('${currentZoneFilter}')" style="height: var(--button-height); padding: 0 8px; font-size: 9px; background: var(--surface); color: var(--primary); border: 1px solid var(--primary);">✖ QUITAR FILTRO</button>
                 </div>`;
                 parts = parts.filter(p => (p.pos || "").toUpperCase().includes(currentZoneFilter) || (p.desc || "").toUpperCase().includes(currentZoneFilter));
             } else {
+                const warningEl = document.getElementById('plane-warning-text');
+                if (warningEl) warningEl.textContent = '';
                 alertZoneEl.innerHTML = '';
             }
 
@@ -1977,11 +2235,9 @@ window.adminToggleUsuario = function(user) {
             }
 
             if (parts.length === 0) {
-                container.innerHTML = warningHtml || `<div style="grid-column: 1/-1;" class="no-results">No se encontraron componentes aplicables a esta configuración/efectividad.</div>`;
+                container.innerHTML = `<div style="grid-column: 1/-1;" class="no-results">No se encontraron componentes aplicables a esta configuración/efectividad.</div>`;
                 return;
             }
-
-            if (warningHtml) container.innerHTML += warningHtml;
 
             parts.forEach(part => {
                 let badge = '';
@@ -2062,6 +2318,9 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('btn-delete-plane').style.display = 'none';
             document.getElementById('plane-eff-badge').style.display = 'none';
             document.getElementById('zone-filter-alert').innerHTML = '';
+            const pw = document.getElementById('plane-warning-text');
+            if (pw) pw.textContent = '';
+            document.getElementById('zone-buttons').innerHTML = '';
             
             localStorage.removeItem('saved_plane_reg');
             updateAdminUI();
@@ -2077,6 +2336,22 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('sp-id').value = partId;
             document.getElementById('sp-desc').value = part.desc || '';
             document.getElementById('sp-pn').value = part.pn || '';
+            document.getElementById('sp-pn').onblur = function() {
+                const pn = this.value.trim().toUpperCase();
+                if (!pn) return;
+                const ata = document.getElementById('sp-ata');
+                const ipc = document.getElementById('sp-ipc');
+                if (ata.value.trim() && ipc.value.trim()) {
+                    checkPnMismatch(this, ata, ipc);
+                    return;
+                }
+                const found = lookupPartByPN(pn);
+                if (found) {
+                    if (!ata.value.trim() && found.ata) ata.value = found.ata;
+                    if (!ipc.value.trim() && found.ipc) ipc.value = found.ipc;
+                }
+                checkPnMismatch(this, ata, ipc);
+            };
             
             const posInput = document.getElementById('sp-pos');
             posInput.value = part.pos || '';
@@ -2114,6 +2389,22 @@ window.adminToggleUsuario = function(user) {
             document.getElementById('sp-id').value = generateId(); 
             document.getElementById('sp-desc').value = '';
             document.getElementById('sp-pn').value = '';
+            document.getElementById('sp-pn').onblur = function() {
+                const pn = this.value.trim().toUpperCase();
+                if (!pn) return;
+                const ata = document.getElementById('sp-ata');
+                const ipc = document.getElementById('sp-ipc');
+                if (ata.value.trim() && ipc.value.trim()) {
+                    checkPnMismatch(this, ata, ipc);
+                    return;
+                }
+                const found = lookupPartByPN(pn);
+                if (found) {
+                    if (!ata.value.trim() && found.ata) ata.value = found.ata;
+                    if (!ipc.value.trim() && found.ipc) ipc.value = found.ipc;
+                }
+                checkPnMismatch(this, ata, ipc);
+            };
             document.getElementById('sp-pos').value = '';
             
             const optionsDiv = document.getElementById('sp-pos-options');
@@ -2396,6 +2687,32 @@ window.adminToggleUsuario = function(user) {
                 ${overrideHtml}
             `;
             container.appendChild(row);
+
+            // Auto-rellenar CMM/IPC si el P/N ya existe en la base de datos
+            const pnInput = row.querySelector('.part-pn');
+            const ataInput = row.querySelector('.part-ata');
+            const ipcInput = row.querySelector('.part-ipc');
+            if (pnInput && ataInput && ipcInput) {
+                const tryAutofill = () => {
+                    const pn = pnInput.value.trim().toUpperCase();
+                    if (!pn) return;
+                    if (ataInput.value.trim() && ipcInput.value.trim()) {
+                        // ya tienen valores: verificar mismatch
+                        checkPnMismatch(pnInput, ataInput, ipcInput);
+                        return;
+                    }
+                    const found = lookupPartByPN(pn);
+                    if (found) {
+                        if (!ataInput.value.trim() && found.ata) ataInput.value = found.ata;
+                        if (!ipcInput.value.trim() && found.ipc) ipcInput.value = found.ipc;
+                    }
+                    checkPnMismatch(pnInput, ataInput, ipcInput);
+                };
+                pnInput.addEventListener('blur', tryAutofill);
+                pnInput.addEventListener('change', tryAutofill);
+                ataInput.addEventListener('blur', () => checkPnMismatch(pnInput, ataInput, ipcInput));
+                ipcInput.addEventListener('blur', () => checkPnMismatch(pnInput, ataInput, ipcInput));
+            }
             
             if (isPlaneModal && isBase && status === 'standard') {
                 const inputs = row.querySelectorAll('input:not(.part-app)');
