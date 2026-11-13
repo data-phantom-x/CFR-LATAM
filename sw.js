@@ -1,5 +1,5 @@
 // ─── SERVICE WORKER — CFR Cabin Furnishings Report ───────────────────────────
-const VERSION = 'cfr-v1';
+const VERSION = 'cfr-v2';
 const CACHE_APP = `${VERSION}-app`;
 const CACHE_VENDOR = `${VERSION}-vendor`;
 
@@ -12,8 +12,8 @@ const PRECACHE = [
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
   './icons/favicon-16.png',
-  './icons/cfr-top.svg',
   './icons/cfr-logo.svg',
+  './icons/share-ios.png',
 ];
 
 const NUNCA_CACHEAR = [
